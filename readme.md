@@ -9,7 +9,10 @@ kesusahan atau belum tahu
 6. nanti copy token nya
 
 token dipakai buat saat clone disuruh isi password nya nanti tinggal paste
-buat username isi pake username kalian (usahakn sudah di invite ya)
+buat username isi pake username kalian (usahakan sudah di invite ya)
 bingung tanya di grub
+
+* Oh ya lupa buat commit pake token yang sama kalau misal expired tinggal 
+bikin lagi pakai panduan diatas
 
 sincerly FandyHanz (Fandy Wahyu Hanzura)
