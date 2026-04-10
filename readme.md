@@ -1,4 +1,4 @@
-ini untuk proyek sekaligus tes, panduan tutorial untik clone kalau
+ini untuk Deploy proyek, panduan tutorial untik clone kalau
 kesusahan atau belum tahu
 
 1. buka profile trus setting
