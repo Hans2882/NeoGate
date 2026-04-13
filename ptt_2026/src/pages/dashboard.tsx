@@ -1,9 +1,29 @@
 import Head from 'next/head'
+import { useEffect, useState } from 'react'
 import ActivityTable from '../components/activityTable'
 import Card from '../components/card'
 import Chart from '../components/chart'
 import Sidebar from '../components/sidebar'
 import styles from '../styles/dashboard.module.scss'
+
+const chartSeries = {
+  daily: {
+    labels: ['00:00', '02:00', '04:00', '08:00', '12:00', '16:00', '20:00', '23:00'],
+    values: [3, 4, 5, 7, 10, 9, 6, 4]
+  },
+  weekly: {
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    values: [7, 8, 7, 9, 11, 6, 5]
+  },
+  monthly: {
+    labels: ['Jan','Feb','Mar','Apr','May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    values: [5, 6, 8, 7, 9, 10, 8, 6, 7, 9, 10, 8]
+  },
+  yearly: {
+    labels: [ '2022', '2023', '2024', '2025', '2026' ],
+    values: [5, 6, 8, 7, 9]
+  }
+} as const
 
 const data = {
   cards: [
@@ -67,13 +87,26 @@ function WarningIcon() {
 }
 
 export default function Dashboard() {
+  const [activeSeries, setActiveSeries] = useState<keyof typeof chartSeries>('daily')
+  const [chartValues, setChartValues] = useState<number[]>([...chartSeries.daily.values])
+  const [selectedBar, setSelectedBar] = useState(0)
+
+  useEffect(() => {
+    setChartValues([...chartSeries[activeSeries].values])
+    setSelectedBar(0)
+  }, [activeSeries])
+
+  const handleBarClick = (index: number) => {
+    setSelectedBar(index)
+  }
+
   return (
     <div className={styles.page}>
       <Head>
         <title>Dashboard — NeoGate</title>
       </Head>
 
-      <Sidebar />
+      <Sidebar active="dashboard" />
 
       <div className={styles.mainContainer}>
         <div className={styles.topBar}>
@@ -157,22 +190,43 @@ export default function Dashboard() {
               </div>
 
               <div className={styles.tabs}>
-                <button className={`${styles.tab} ${styles.tabActive}`} type="button">
+                <button
+                  className={`${styles.tab} ${activeSeries === 'daily' ? styles.tabActive : ''}`}
+                  type="button"
+                  onClick={() => setActiveSeries('daily')}
+                >
                   Daily
                 </button>
-                <button className={styles.tab} type="button">
+                <button
+                  className={`${styles.tab} ${activeSeries === 'weekly' ? styles.tabActive : ''}`}
+                  type="button"
+                  onClick={() => setActiveSeries('weekly')}
+                >
                   Weekly
                 </button>
-                <button className={styles.tab} type="button">
+                <button
+                  className={`${styles.tab} ${activeSeries === 'monthly' ? styles.tabActive : ''}`}
+                  type="button"
+                  onClick={() => setActiveSeries('monthly')}
+                >
                   Monthly
                 </button>
-                <button className={styles.tab} type="button">
+                <button
+                  className={`${styles.tab} ${activeSeries === 'yearly' ? styles.tabActive : ''}`}
+                  type="button"
+                  onClick={() => setActiveSeries('yearly')}
+                >
                   Yearly
                 </button>
               </div>
             </div>
 
-            <Chart values={data.chart} />
+            <Chart
+              values={chartValues}
+              labels={[...chartSeries[activeSeries].labels]}
+              activeBarIndex={selectedBar}
+              onBarClick={handleBarClick}
+            />
           </section>
 
           <section className={styles.activitySection}>
