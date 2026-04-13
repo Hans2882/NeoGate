@@ -544,7 +544,9 @@
   flex: 1;
   min-width: 44px;
   border-radius: 8px 8px 0 0;
+  border: none;
   background: linear-gradient(180deg, #495879, #42506f);
+  cursor: pointer;
   transition: transform 0.2s ease, filter 0.2s ease, background 0.2s ease;
 }
 

@@ -1,6 +1,10 @@
 import React from 'react'
 import styles from '../styles/dashboard.module.scss'
 
+interface SidebarProps {
+  active?: 'dashboard' | 'settings'
+}
+
 function RadarIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -42,7 +46,7 @@ function HelpIcon() {
   )
 }
 
-export default function Sidebar() {
+export default function Sidebar({ active = 'dashboard' }: SidebarProps) {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.brand}>
@@ -57,13 +61,13 @@ export default function Sidebar() {
       </div>
 
       <nav className={styles.nav}>
-        <a className={`${styles.navItem} ${styles.navItemActive}`} href="/dashboard">
+        <a className={`${styles.navItem} ${active === 'dashboard' ? styles.navItemActive : ''}`} href="/dashboard">
           <span className={styles.navIcon}>
             <GridIcon />
           </span>
           Dashboard
         </a>
-        <a className={styles.navItem} href="#">
+        <a className={`${styles.navItem} ${active === 'settings' ? styles.navItemActive : ''}`} href="/settings">
           <span className={styles.navIcon}>
             <GearIcon />
           </span>
