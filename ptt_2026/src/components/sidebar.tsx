@@ -1,19 +1,9 @@
 import React from 'react'
+import Image from 'next/image'
 import styles from '../styles/dashboard.module.scss'
 
 interface SidebarProps {
   active?: 'dashboard' | 'settings'
-}
-
-function RadarIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 6.5a5.5 5.5 0 0 1 5.5 5.5" />
-      <path d="M12 3a9 9 0 0 1 9 9" />
-      <path d="M12 10.5a1.5 1.5 0 1 1-1.5 1.5A1.5 1.5 0 0 1 12 10.5Z" />
-      <path d="M4 20l5.8-5.8" />
-    </svg>
-  )
 }
 
 function GridIcon() {
@@ -50,10 +40,9 @@ export default function Sidebar({ active = 'dashboard' }: SidebarProps) {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.brand}>
-        <div className={styles.logoIcon}>
-          <RadarIcon />
+        <div className={styles.logo}>
+          <Image src="/logo2.png" alt="NeoGate logo" width={64} height={64} priority />
         </div>
-        <div className={styles.logo}>⚙️</div>
         <div>
           <div className={styles.brandTitle}>Sistem Deteksi Palang Kereta</div>
           <div className={styles.brandSub}>Network Node 04</div>

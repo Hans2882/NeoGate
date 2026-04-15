@@ -6,6 +6,19 @@ import Chart from '../components/chart'
 import Sidebar from '../components/sidebar'
 import styles from '../styles/dashboard.module.scss'
 
+type Activity = {
+  time: string
+  name: string
+  status: string
+  direction: string
+}
+
+type ActivityResponse = {
+  status: boolean
+  status_code: number
+  data: Activity[]
+}
+
 const chartSeries = {
   daily: {
     labels: ['00:00', '02:00', '04:00', '08:00', '12:00', '16:00', '20:00', '23:00'],
@@ -90,11 +103,29 @@ export default function Dashboard() {
   const [activeSeries, setActiveSeries] = useState<keyof typeof chartSeries>('daily')
   const [chartValues, setChartValues] = useState<number[]>([...chartSeries.daily.values])
   const [selectedBar, setSelectedBar] = useState(0)
+  const [activities, setActivities] = useState<Activity[]>(data.activities)
 
   useEffect(() => {
     setChartValues([...chartSeries[activeSeries].values])
     setSelectedBar(0)
   }, [activeSeries])
+
+  useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        const res = await fetch('/api/aktivitas')
+        const json: ActivityResponse = await res.json()
+
+        if (json.status && Array.isArray(json.data)) {
+          setActivities(json.data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch activities:', error)
+      }
+    }
+
+    fetchActivities()
+  }, [])
 
   const handleBarClick = (index: number) => {
     setSelectedBar(index)
@@ -238,7 +269,7 @@ export default function Dashboard() {
               </a>
             </div>
 
-            <ActivityTable rows={data.activities} />
+            <ActivityTable rows={activities} />
           </section>
 
           <footer className={styles.footer}>© 2026 Sistem Palang KAI</footer>
