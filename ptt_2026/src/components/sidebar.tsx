@@ -1,6 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
-import styles from '@/views/dashboard/dashboard.module.scss'
+import styles from '@/styles/components/components.module.scss'
 
 interface SidebarProps {
   active?: 'dashboard' | 'settings'
