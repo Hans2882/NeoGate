@@ -1,12 +1,12 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import ActivityTable from '../components/activityTable'
-import Card from '../components/card'
-import Chart from '../components/chart'
-import Sidebar from '../components/sidebar'
-import { getSessionUser, isAuthenticated, logoutUser } from '../lib/auth'
-import styles from '../styles/dashboard.module.scss'
+import ActivityTable from '@/components/activityTable'
+import Card from '@/components/card'
+import Chart from '@/components/chart'
+import Sidebar from '@/components/sidebar'
+import { getSessionUser, isAuthenticated, logoutUser } from '@/lib/auth'
+import styles from '@/views/dashboard/dashboard.module.scss'
 
 type Activity = {
   time: string
@@ -101,7 +101,7 @@ function WarningIcon() {
   )
 }
 
-export default function Dashboard() {
+export default function ViewDashboard() {
   const router = useRouter()
   const [activeSeries, setActiveSeries] = useState<keyof typeof chartSeries>('daily')
   const [chartValues, setChartValues] = useState<number[]>([...chartSeries.daily.values])
@@ -112,7 +112,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.replace('/login')
+      router.replace('/auth/login')
       return
     }
 
@@ -156,7 +156,7 @@ export default function Dashboard() {
 
   const handleLogout = () => {
     logoutUser()
-    router.replace('/login')
+    router.replace('/auth/login')
   }
 
   if (!authChecked) {

@@ -1,4 +1,4 @@
-import styles from '../styles/dashboard.module.scss'
+import styles from '@/views/dashboard/dashboard.module.scss'
 
 type CardIcon = 'train' | 'speed' | 'timer' | 'chip'
 type CardAccent = 'blue' | 'amber'

@@ -1,37 +1,44 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { isAuthenticated, registerUser } from '../lib/auth'
-import styles from '../styles/auth.module.css'
+import { getRegisteredUser, isAuthenticated, loginUser } from '@/lib/auth'
+import styles from '@/views/auth/auth.module.css'
 
-export default function RegisterPage() {
+export default function ViewLoginPage() {
   const router = useRouter()
-  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
   const [message, setMessage] = useState('')
 
   useEffect(() => {
     if (isAuthenticated()) {
-      router.replace('/dashboard')
+      router.replace('auth/dashboard')
     }
   }, [router])
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    if (!name.trim() || !email.trim()) {
-      setMessage('Nama dan email harus diisi.')
+    const registeredUser = getRegisteredUser()
+
+    if (!registeredUser) {
+      setMessage('Belum ada akun. Silakan register dulu.')
       return
     }
 
-    registerUser({ name: name.trim(), email: email.trim() })
+    if (registeredUser.email.toLowerCase() !== email.trim().toLowerCase()) {
+      setMessage('Email belum terdaftar. Coba register atau cek input Anda.')
+      return
+    }
+
+    loginUser(email.trim(), name.trim() || registeredUser.name)
     router.replace('/dashboard')
   }
 
   return (
     <>
       <Head>
-        <title>Register - NeoGate</title>
+        <title>Login - NeoGate</title>
       </Head>
 
       <main className={styles.page}>
@@ -41,35 +48,35 @@ export default function RegisterPage() {
               <div className={styles.brandRow}>
                 <div>
                   <div className={styles.eyebrow}>NeoGate</div>
-                  <h1 className={styles.title}>Buat akun</h1>
+                  <h1 className={styles.title}>Masuk</h1>
                 </div>
               </div>
               <p className={styles.description}>
-                Registrasi dipakai sebagai gerbang awal sebelum masuk ke dashboard dan settings aplikasi monitoring
-                palang kereta.
+                Gunakan akun yang sudah didaftarkan untuk membuka dashboard palang kereta, melihat grafik trafik,
+                dan mengatur sistem.
               </p>
             </div>
+
           </div>
 
           <div className={styles.formPanel}>
             <div className={styles.formCard}>
               <div>
-                <h2 className={styles.formTitle}>Register</h2>
-                <p className={styles.formSubtitle}>Isi nama dan email untuk membuat akun lokal.</p>
+                <h2 className={styles.formTitle}>Login</h2>
+                <p className={styles.formSubtitle}>Masukkan email akun yang sudah Anda buat.</p>
               </div>
 
               {message ? <div className={styles.alert}>{message}</div> : null}
 
               <form className={styles.form} onSubmit={handleSubmit}>
                 <label className={styles.field}>
-                  Nama Lengkap
+                  Nama
                   <input
                     className={styles.input}
                     type="text"
                     value={name}
                     onChange={(event) => setName(event.target.value)}
-                    placeholder="Contoh: John Doe"
-                    required
+                    placeholder="Masukkan nama"
                   />
                 </label>
 
@@ -86,13 +93,14 @@ export default function RegisterPage() {
                 </label>
 
                 <button className={styles.buttonPrimary} type="submit">
-                  Buat Akun
+                  Masuk ke Dashboard
                 </button>
               </form>
+
               <div className={styles.linkRow}>
-                <span>Sudah punya akun?</span>
-                <a className={styles.switchLink} href="/login">
-                  Login di sini
+                <span>Belum punya akun?</span>
+                <a className={styles.switchLink} href="/auth/register">
+                  Register di sini
                 </a>
               </div>
             </div>
