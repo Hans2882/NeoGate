@@ -1,5 +1,8 @@
 import Head from 'next/head'
+import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 import Sidebar from '../components/sidebar'
+import { getSessionUser, isAuthenticated, logoutUser } from '../lib/auth'
 import dashboardStyles from '../styles/dashboard.module.scss'
 import styles from '../styles/settings.module.scss'
 
@@ -31,6 +34,33 @@ function SettingsIcon() {
 }
 
 export default function SettingsPage() {
+  const router = useRouter()
+  const [userName, setUserName] = useState('Fandy')
+  const [authChecked, setAuthChecked] = useState(false)
+
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.replace('/login')
+      return
+    }
+
+    const sessionUser = getSessionUser()
+    if (sessionUser?.name) {
+      setUserName(sessionUser.name)
+    }
+
+    setAuthChecked(true)
+  }, [router])
+
+  const handleLogout = () => {
+    logoutUser()
+    router.replace('/login')
+  }
+
+  if (!authChecked) {
+    return null
+  }
+
   return (
     <div className={dashboardStyles.page}>
       <Head>
@@ -60,10 +90,13 @@ export default function SettingsPage() {
             <div className={dashboardStyles.profileCard}>
               <div className={dashboardStyles.avatar}>F</div>
               <div>
-                <div className={dashboardStyles.profileName}>Fandy</div>
+                <div className={dashboardStyles.profileName}>{userName}</div>
                 <div className={dashboardStyles.profileRole}>Operational Tier 1</div>
               </div>
             </div>
+            <button className={dashboardStyles.logoutButton} type="button" onClick={handleLogout}>
+              Logout
+            </button>
           </div>
         </div>
 

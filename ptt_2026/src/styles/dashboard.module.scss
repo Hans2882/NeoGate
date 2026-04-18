@@ -263,6 +263,18 @@
   cursor: pointer;
 }
 
+.logoutButton {
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(123, 149, 217, 0.22);
+  background: rgba(69, 80, 109, 0.28);
+  color: #dfe8ff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .profileCard {
   display: flex;
   align-items: center;

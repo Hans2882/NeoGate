@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
@@ -10,4 +11,17 @@ export default function Home() {
   return (
    <Dashboard />
   )
+=======
+import { useEffect } from 'react'
+import { useRouter } from 'next/router'
+
+export default function Home() {
+  const router = useRouter()
+
+  useEffect(() => {
+    router.replace('/login')
+  }, [router])
+
+  return null
+>>>>>>> Stashed changes
 }

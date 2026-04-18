@@ -1,9 +1,11 @@
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import ActivityTable from '../components/activityTable'
 import Card from '../components/card'
 import Chart from '../components/chart'
 import Sidebar from '../components/sidebar'
+import { getSessionUser, isAuthenticated, logoutUser } from '../lib/auth'
 import styles from '../styles/dashboard.module.scss'
 
 type Activity = {
@@ -100,10 +102,27 @@ function WarningIcon() {
 }
 
 export default function Dashboard() {
+  const router = useRouter()
   const [activeSeries, setActiveSeries] = useState<keyof typeof chartSeries>('daily')
   const [chartValues, setChartValues] = useState<number[]>([...chartSeries.daily.values])
   const [selectedBar, setSelectedBar] = useState(0)
   const [activities, setActivities] = useState<Activity[]>(data.activities)
+  const [userName, setUserName] = useState('Fandy')
+  const [authChecked, setAuthChecked] = useState(false)
+
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.replace('/login')
+      return
+    }
+
+    const sessionUser = getSessionUser()
+    if (sessionUser?.name) {
+      setUserName(sessionUser.name)
+    }
+
+    setAuthChecked(true)
+  }, [router])
 
   useEffect(() => {
     setChartValues([...chartSeries[activeSeries].values])
@@ -111,6 +130,10 @@ export default function Dashboard() {
   }, [activeSeries])
 
   useEffect(() => {
+    if (!authChecked) {
+      return
+    }
+
     const fetchActivities = async () => {
       try {
         const res = await fetch('/api/aktivitas')
@@ -125,10 +148,19 @@ export default function Dashboard() {
     }
 
     fetchActivities()
-  }, [])
+  }, [authChecked])
 
   const handleBarClick = (index: number) => {
     setSelectedBar(index)
+  }
+
+  const handleLogout = () => {
+    logoutUser()
+    router.replace('/login')
+  }
+
+  if (!authChecked) {
+    return null
   }
 
   return (
@@ -160,10 +192,13 @@ export default function Dashboard() {
             <div className={styles.profileCard}>
               <div className={styles.avatar}>F</div>
               <div>
-                <div className={styles.profileName}>Fandy</div>
+                <div className={styles.profileName}>{userName}</div>
                 <div className={styles.profileRole}>Operational Tier 1</div>
               </div>
             </div>
+            <button className={styles.logoutButton} type="button" onClick={handleLogout}>
+              Logout
+            </button>
           </div>
         </div>
 
