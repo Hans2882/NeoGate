@@ -62,6 +62,7 @@ export default function Sidebar({ active = 'dashboard' }: SidebarProps) {
           </span>
           Settings
         </a>
+        
       </nav>
 
       <div className={styles.sidebarFooter}>

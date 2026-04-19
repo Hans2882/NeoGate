@@ -21,6 +21,10 @@ type ActivityResponse = {
   data: Activity[]
 }
 
+type GateStatus = 'terbuka' | 'tertutup'
+type TrainStatus = 'mendekat' | 'lewat' | 'aman'
+type ControlMode = 'otomatis' | 'manual'
+
 const chartSeries = {
   daily: {
     labels: ['00:00', '02:00', '04:00', '08:00', '12:00', '16:00', '20:00', '23:00'],
@@ -109,6 +113,9 @@ export default function ViewDashboard() {
   const [activities, setActivities] = useState<Activity[]>(data.activities)
   const [userName, setUserName] = useState('Fandy')
   const [authChecked, setAuthChecked] = useState(false)
+  const [gateStatus, setGateStatus] = useState<GateStatus>('terbuka')
+  const [trainStatus, setTrainStatus] = useState<TrainStatus>('aman')
+  const [controlMode, setControlMode] = useState<ControlMode>('otomatis')
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -150,6 +157,30 @@ export default function ViewDashboard() {
     fetchActivities()
   }, [authChecked])
 
+  useEffect(() => {
+    if (controlMode !== 'otomatis') {
+      return
+    }
+
+    const cycle = window.setInterval(() => {
+      setTrainStatus((previousStatus) => {
+        const nextStatus: TrainStatus =
+          previousStatus === 'aman' ? 'mendekat' : previousStatus === 'mendekat' ? 'lewat' : 'aman'
+
+        setGateStatus(nextStatus === 'aman' ? 'terbuka' : 'tertutup')
+        return nextStatus
+      })
+    }, 5000)
+
+    return () => window.clearInterval(cycle)
+  }, [controlMode])
+
+  useEffect(() => {
+    if (controlMode === 'otomatis') {
+      setGateStatus(trainStatus === 'aman' ? 'terbuka' : 'tertutup')
+    }
+  }, [controlMode, trainStatus])
+
   const handleBarClick = (index: number) => {
     setSelectedBar(index)
   }
@@ -159,9 +190,24 @@ export default function ViewDashboard() {
     router.replace('/auth/login')
   }
 
+  const handleOpenGate = () => {
+    setGateStatus('terbuka')
+  }
+
+  const handleCloseGate = () => {
+    setGateStatus('tertutup')
+  }
+
+  const handleToggleMode = () => {
+    setControlMode((previousMode) => (previousMode === 'otomatis' ? 'manual' : 'otomatis'))
+  }
+
   if (!authChecked) {
     return null
   }
+
+  const warningActive = trainStatus !== 'aman' || gateStatus === 'tertutup'
+  const isAutomatic = controlMode === 'otomatis'
 
   return (
     <div className={styles.page}>
@@ -222,6 +268,88 @@ export default function ViewDashboard() {
               <span>Next Expected Arrival: 14:42 (Train EX-904)</span>
             </div>
           </header>
+
+          <section className={styles.controlSection}>
+            <div className={styles.statusPanel}>
+              <h2>Status & Kontrol Ringan</h2>
+
+              <div className={styles.statusPillsWrap}>
+                <div className={styles.statusItem}>
+                  <span className={styles.statusLabel}>Status palang</span>
+                  <span className={`${styles.stateBadge} ${gateStatus === 'terbuka' ? styles.stateSafe : styles.stateDanger}`}>
+                    {gateStatus}
+                  </span>
+                </div>
+
+                <div className={styles.statusItem}>
+                  <span className={styles.statusLabel}>Status kereta</span>
+                  <span
+                    className={`${styles.stateBadge} ${
+                      trainStatus === 'aman' ? styles.stateSafe : trainStatus === 'mendekat' ? styles.stateWarn : styles.stateDanger
+                    }`}
+                  >
+                    {trainStatus}
+                  </span>
+                </div>
+              </div>
+
+              <div className={styles.controls}>
+                <button
+                  type="button"
+                  className={styles.controlButton}
+                  onClick={handleOpenGate}
+                  disabled={isAutomatic}
+                >
+                  Buka palang
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.controlButton} ${styles.controlButtonAlert}`}
+                  onClick={handleCloseGate}
+                  disabled={isAutomatic}
+                >
+                  Tutup palang
+                </button>
+
+                <label className={styles.modeSwitch}>
+                  <input type="checkbox" checked={isAutomatic} onChange={handleToggleMode} />
+                  <span className={styles.switchTrack}>
+                    <span className={styles.switchKnob} />
+                  </span>
+                  <span className={styles.switchLabel}>Mode {isAutomatic ? 'otomatis' : 'manual'}</span>
+                </label>
+              </div>
+            </div>
+
+            <div className={`${styles.visualPanel} ${warningActive ? styles.visualAlert : ''}`}>
+              <div className={`${styles.warningLights} ${warningActive ? styles.warningLightsActive : ''}`}>
+                <span />
+                <span />
+              </div>
+
+              <div className={styles.barrierUnit}>
+                <span className={styles.barrierPole} />
+                <span className={`${styles.barrierArm} ${gateStatus === 'tertutup' ? styles.barrierArmDown : styles.barrierArmUp}`} />
+              </div>
+
+              <div className={styles.railLine} />
+
+              <div
+                className={`${styles.trainVisual} ${
+                  trainStatus === 'mendekat'
+                    ? styles.trainApproaching
+                    : trainStatus === 'lewat'
+                      ? styles.trainPassing
+                      : styles.trainSafe
+                }`}
+              >
+                <span className={styles.trainCabin} />
+                <span className={styles.trainWindow} />
+                <span className={styles.trainWheel} />
+                <span className={styles.trainWheel} />
+              </div>
+            </div>
+          </section>
 
           <section className={styles.cards}>
             {data.cards.map((card, index) => (

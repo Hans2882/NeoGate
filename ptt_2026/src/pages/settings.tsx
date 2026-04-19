@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Sidebar from '../components/sidebar'
 import { getSessionUser, isAuthenticated, logoutUser } from '../lib/auth'
-import dashboardStyles from '../styles/dashboard.module.scss'
+import dashboardStyles from '../views/dashboard/dashboard.module.scss'
 import styles from '../styles/settings.module.scss'
 
 function SearchIcon() {
@@ -37,6 +37,9 @@ export default function SettingsPage() {
   const router = useRouter()
   const [userName, setUserName] = useState('Fandy')
   const [authChecked, setAuthChecked] = useState(false)
+  const [defaultMode, setDefaultMode] = useState<'otomatis' | 'manual'>('otomatis')
+  const [gateDelay, setGateDelay] = useState(12)
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true)
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -112,61 +115,141 @@ export default function SettingsPage() {
 
           <section className={styles.settingsGrid}>
             <article className={styles.panel}>
-              <h2>Quick Controls</h2>
-              <p className={styles.panelHint}>Status kontrol inti yang sedang aktif.</p>
+              <h2>Kontrol Dasar Palang</h2>
+              <p className={styles.panelHint}>Atur mode default, delay palang, dan notifikasi utama.</p>
 
               <div className={styles.settingList}>
                 <div className={styles.settingRow}>
-                  <span className={styles.settingText}>Alert Notification</span>
-                  <span className={styles.settingStatus}>Enabled</span>
+                  <span className={styles.settingText}>Mode default</span>
+                  <span className={styles.settingStatus}>{defaultMode}</span>
                 </div>
                 <div className={styles.settingRow}>
-                  <span className={styles.settingText}>Auto Data Sync</span>
-                  <span className={styles.settingStatus}>Every 15 min</span>
+                  <span className={styles.settingText}>Delay palang turun</span>
+                  <span className={styles.settingStatus}>{gateDelay}m</span>
                 </div>
                 <div className={styles.settingRow}>
-                  <span className={styles.settingText}>Emergency Broadcast</span>
-                  <span className={styles.settingStatus}>Standby</span>
+                  <span className={styles.settingText}>Notifikasi</span>
+                  <span className={styles.settingStatus}>{notificationsEnabled ? 'aktif' : 'nonaktif'}</span>
                 </div>
               </div>
             </article>
 
             <article className={styles.panel}>
-              <h2>Monitoring Preferences</h2>
-              <p className={styles.panelHint}>Atur parameter agar sesuai kebutuhan stasiun.</p>
+              <h2>Pengaturan Operasional</h2>
+              <p className={styles.panelHint}>Konfigurasi utama untuk perilaku palang kereta.</p>
 
               <form className={styles.formGrid}>
                 <label className={styles.fieldLabel}>
-                  Node Name
-                  <input className={styles.input} type="text" defaultValue="Network Node 04" />
-                </label>
-
-                <label className={styles.fieldLabel}>
-                  Refresh Interval
-                  <select className={styles.select} defaultValue="15m">
-                    <option value="5m">5 Minutes</option>
-                    <option value="15m">15 Minutes</option>
-                    <option value="30m">30 Minutes</option>
-                    <option value="60m">60 Minutes</option>
+                  Mode Default Sistem
+                  <select
+                    className={styles.select}
+                    value={defaultMode}
+                    onChange={(event) => setDefaultMode(event.target.value as 'otomatis' | 'manual')}
+                  >
+                    <option value="otomatis">Otomatis</option>
+                    <option value="manual">Manual</option>
                   </select>
                 </label>
 
                 <label className={styles.fieldLabel}>
-                  Alert Priority
-                  <select className={styles.select} defaultValue="high">
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                    <option value="critical">Critical</option>
+                  Delay Waktu Palang Turun (menit)
+                  <input
+                    className={styles.input}
+                    type="number"
+                    min={1}
+                    max={60}
+                    value={gateDelay}
+                    onChange={(event) => setGateDelay(Number(event.target.value))}
+                  />
+                </label>
+
+                <label className={styles.fieldLabel}>
+                  Notifikasi Sistem
+                  <select
+                    className={styles.select}
+                    value={notificationsEnabled ? 'aktif' : 'nonaktif'}
+                    onChange={(event) => setNotificationsEnabled(event.target.value === 'aktif')}
+                  >
+                    <option value="aktif">Aktif</option>
+                    <option value="nonaktif">Nonaktif</option>
                   </select>
                 </label>
               </form>
 
               <div className={styles.actions}>
                 <button type="button" className={styles.buttonPrimary}>
-                  Save Settings
+                  Simpan Pengaturan
                 </button>
                 <button type="button" className={styles.buttonGhost}>
                   Reset
+                </button>
+              </div>
+            </article>
+
+            <article className={styles.panel}>
+              <h2>Konfigurasi Sensor</h2>
+              <p className={styles.panelHint}>Atur parameter sensor untuk deteksi mendekat/lewat secara akurat.</p>
+
+              <form className={styles.formGrid}>
+                <label className={styles.fieldLabel}>
+                  Sensor Utama
+                  <select className={styles.select} defaultValue="infrared">
+                    <option value="infrared">Infrared</option>
+                    <option value="ultrasonic">Ultrasonic</option>
+                    <option value="magnetic">Magnetic</option>
+                  </select>
+                </label>
+
+                <label className={styles.fieldLabel}>
+                  Ambang Jarak Deteksi (meter)
+                  <input className={styles.input} type="number" min={1} defaultValue={45} />
+                </label>
+
+                <label className={styles.fieldLabel}>
+                  Sensitivitas Sensor
+                  <select className={styles.select} defaultValue="medium">
+                    <option value="low">Rendah</option>
+                    <option value="medium">Sedang</option>
+                    <option value="high">Tinggi</option>
+                  </select>
+                </label>
+              </form>
+            </article>
+
+            <article className={styles.panel}>
+              <h2>Manajemen User (Opsional)</h2>
+              <p className={styles.panelHint}>Kelola pengguna operator untuk akses dashboard.</p>
+
+              <form className={styles.formGrid}>
+                <label className={styles.fieldLabel}>
+                  Nama User Baru
+                  <input className={styles.input} type="text" placeholder="Contoh: Operator Stasiun A" />
+                </label>
+
+                <label className={styles.fieldLabel}>
+                  Role
+                  <select className={styles.select} defaultValue="operator">
+                    <option value="operator">Operator</option>
+                    <option value="supervisor">Supervisor</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </label>
+
+                <label className={styles.fieldLabel}>
+                  Status Akun
+                  <select className={styles.select} defaultValue="active">
+                    <option value="active">Aktif</option>
+                    <option value="inactive">Nonaktif</option>
+                  </select>
+                </label>
+              </form>
+
+              <div className={styles.actions}>
+                <button type="button" className={styles.buttonPrimary}>
+                  Tambah User
+                </button>
+                <button type="button" className={styles.buttonGhost}>
+                  Lihat Daftar User
                 </button>
               </div>
             </article>
