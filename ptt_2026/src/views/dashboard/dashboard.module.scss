@@ -410,6 +410,17 @@
   line-height: 1.2;
 }
 
+.systemAlert {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 189, 89, 0.38);
+  background: rgba(255, 189, 89, 0.14);
+  color: #ffd287;
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .statusPillsWrap {
   margin-top: 18px;
   display: grid;
@@ -465,6 +476,13 @@
   border: 1px solid rgba(255, 175, 175, 0.32);
 }
 
+.stateInfo {
+  background: rgba(91, 152, 255, 0.2);
+  color: #b5d4ff;
+  border: 1px solid rgba(181, 212, 255, 0.34);
+  min-width: 132px;
+}
+
 .controls {
   margin-top: 18px;
   display: grid;
@@ -496,6 +514,16 @@
 .controlButtonAlert {
   background: rgba(178, 62, 62, 0.22);
   border-color: rgba(255, 163, 163, 0.3);
+}
+
+.controlButtonSensorOn {
+  background: rgba(56, 164, 119, 0.22);
+  border-color: rgba(132, 241, 189, 0.32);
+}
+
+.controlButtonSensorOff {
+  background: rgba(128, 86, 86, 0.28);
+  border-color: rgba(255, 175, 175, 0.3);
 }
 
 .modeSwitch {
@@ -578,6 +606,75 @@
 
 .warningLightsActive span:nth-child(2) {
   animation: blinkLight 0.6s linear infinite 0.3s;
+}
+
+.directionSign {
+  position: absolute;
+  left: 22px;
+  top: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(123, 149, 217, 0.22);
+  background: rgba(15, 26, 47, 0.62);
+}
+
+.directionText {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #b7c6e8;
+}
+
+.directionArrow {
+  width: 24px;
+  height: 10px;
+  position: relative;
+  display: inline-block;
+}
+
+.directionArrow::before,
+.directionArrow::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  background: #b7c6e8;
+}
+
+.directionArrow::before {
+  width: 18px;
+  height: 2px;
+  transform: translateY(-50%);
+}
+
+.directionArrow::after {
+  width: 7px;
+  height: 7px;
+  border-top: 2px solid #b7c6e8;
+  border-right: 2px solid #b7c6e8;
+  background: transparent;
+}
+
+.directionArrowLeft::before {
+  right: 0;
+  animation: arrowPulseLeft 1.1s ease-in-out infinite;
+}
+
+.directionArrowLeft::after {
+  left: 0;
+  transform: translateY(-50%) rotate(-135deg);
+}
+
+.directionArrowRight::before {
+  left: 0;
+  animation: arrowPulseRight 1.1s ease-in-out infinite;
+}
+
+.directionArrowRight::after {
+  right: 0;
+  transform: translateY(-50%) rotate(45deg);
 }
 
 .barrierUnit {
@@ -676,16 +773,29 @@
   right: 24px;
 }
 
-.trainApproaching {
-  animation: trainApproach 3.8s ease-in-out infinite;
+.trainApproachingFromRight {
+  animation: trainApproachFromRight 3.8s ease-in-out infinite;
 }
 
-.trainPassing {
-  animation: trainPass 2.2s linear infinite;
+.trainApproachingFromLeft {
+  animation: trainApproachFromLeft 3.8s ease-in-out infinite;
 }
 
-.trainSafe {
+.trainPassingToLeft {
+  animation: trainPassToLeft 2.2s linear infinite;
+}
+
+.trainPassingToRight {
+  animation: trainPassToRight 2.2s linear infinite;
+}
+
+.trainSafeRight {
   left: calc(100% - 172px);
+  opacity: 0.55;
+}
+
+.trainSafeLeft {
+  left: 22px;
   opacity: 0.55;
 }
 
@@ -1060,6 +1170,72 @@
 
   100% {
     left: calc(100% + 20px);
+  }
+}
+
+@keyframes trainApproachFromRight {
+  0% {
+    left: calc(100% - 170px);
+    transform: scale(0.9);
+  }
+
+  100% {
+    left: 210px;
+    transform: scale(1);
+  }
+}
+
+@keyframes trainApproachFromLeft {
+  0% {
+    left: -170px;
+    transform: scale(0.9);
+  }
+
+  100% {
+    left: 210px;
+    transform: scale(1);
+  }
+}
+
+@keyframes trainPassToLeft {
+  0% {
+    left: 210px;
+  }
+
+  100% {
+    left: -180px;
+  }
+}
+
+@keyframes trainPassToRight {
+  0% {
+    left: 210px;
+  }
+
+  100% {
+    left: calc(100% + 20px);
+  }
+}
+
+@keyframes arrowPulseLeft {
+  0%,
+  100% {
+    transform: translateY(-50%) translateX(0);
+  }
+
+  50% {
+    transform: translateY(-50%) translateX(-3px);
+  }
+}
+
+@keyframes arrowPulseRight {
+  0%,
+  100% {
+    transform: translateY(-50%) translateX(0);
+  }
+
+  50% {
+    transform: translateY(-50%) translateX(3px);
   }
 }
 

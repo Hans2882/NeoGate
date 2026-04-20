@@ -24,6 +24,8 @@ type ActivityResponse = {
 type GateStatus = 'terbuka' | 'tertutup'
 type TrainStatus = 'mendekat' | 'lewat' | 'aman'
 type ControlMode = 'otomatis' | 'manual'
+type SensorStatus = 'aktif' | 'nonaktif'
+type TrainDirection = 'kanan' | 'kiri'
 
 const chartSeries = {
   daily: {
@@ -116,6 +118,9 @@ export default function ViewDashboard() {
   const [gateStatus, setGateStatus] = useState<GateStatus>('terbuka')
   const [trainStatus, setTrainStatus] = useState<TrainStatus>('aman')
   const [controlMode, setControlMode] = useState<ControlMode>('otomatis')
+  const [sensorStatus, setSensorStatus] = useState<SensorStatus>('aktif')
+  const [trainDirection, setTrainDirection] = useState<TrainDirection>('kanan')
+  const [systemAlert, setSystemAlert] = useState<string | null>(null)
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -158,7 +163,7 @@ export default function ViewDashboard() {
   }, [authChecked])
 
   useEffect(() => {
-    if (controlMode !== 'otomatis') {
+    if (controlMode !== 'otomatis' || sensorStatus === 'nonaktif') {
       return
     }
 
@@ -167,19 +172,44 @@ export default function ViewDashboard() {
         const nextStatus: TrainStatus =
           previousStatus === 'aman' ? 'mendekat' : previousStatus === 'mendekat' ? 'lewat' : 'aman'
 
+        if (previousStatus === 'aman' && nextStatus === 'mendekat') {
+          setTrainDirection((previousDirection) => (previousDirection === 'kanan' ? 'kiri' : 'kanan'))
+        }
+
         setGateStatus(nextStatus === 'aman' ? 'terbuka' : 'tertutup')
         return nextStatus
       })
     }, 5000)
 
     return () => window.clearInterval(cycle)
-  }, [controlMode])
+  }, [controlMode, sensorStatus])
 
   useEffect(() => {
     if (controlMode === 'otomatis') {
       setGateStatus(trainStatus === 'aman' ? 'terbuka' : 'tertutup')
     }
   }, [controlMode, trainStatus])
+
+  useEffect(() => {
+    if (sensorStatus === 'nonaktif') {
+      setTrainStatus('aman')
+      setGateStatus('terbuka')
+      setSystemAlert('Sensor nonaktif. Sistem deteksi kereta tidak aktif.')
+      return
+    }
+
+    if (trainStatus === 'mendekat') {
+      setSystemAlert('Kereta mendekat. Palang akan tertutup.')
+      return
+    }
+
+    if (trainStatus === 'lewat') {
+      setSystemAlert('Kereta sedang melintas. Mohon jangan membuka palang.')
+      return
+    }
+
+    setSystemAlert(null)
+  }, [trainStatus, sensorStatus])
 
   const handleBarClick = (index: number) => {
     setSelectedBar(index)
@@ -195,11 +225,22 @@ export default function ViewDashboard() {
   }
 
   const handleCloseGate = () => {
+    if (controlMode === 'manual') {
+      const confirmed = window.confirm('Yakin tutup palang?')
+      if (!confirmed) {
+        return
+      }
+    }
+
     setGateStatus('tertutup')
   }
 
   const handleToggleMode = () => {
     setControlMode((previousMode) => (previousMode === 'otomatis' ? 'manual' : 'otomatis'))
+  }
+
+  const handleToggleSensor = () => {
+    setSensorStatus((previousStatus) => (previousStatus === 'aktif' ? 'nonaktif' : 'aktif'))
   }
 
   if (!authChecked) {
@@ -208,6 +249,19 @@ export default function ViewDashboard() {
 
   const warningActive = trainStatus !== 'aman' || gateStatus === 'tertutup'
   const isAutomatic = controlMode === 'otomatis'
+  const directionLabel = trainDirection === 'kanan' ? 'kanan ke kiri' : 'kiri ke kanan'
+  const directionClass =
+    trainStatus === 'aman'
+      ? trainDirection === 'kanan'
+        ? styles.trainSafeRight
+        : styles.trainSafeLeft
+      : trainStatus === 'mendekat'
+        ? trainDirection === 'kanan'
+          ? styles.trainApproachingFromRight
+          : styles.trainApproachingFromLeft
+        : trainDirection === 'kanan'
+          ? styles.trainPassingToLeft
+          : styles.trainPassingToRight
 
   return (
     <div className={styles.page}>
@@ -273,6 +327,12 @@ export default function ViewDashboard() {
             <div className={styles.statusPanel}>
               <h2>Status & Kontrol Ringan</h2>
 
+              {systemAlert && (
+                <div className={styles.systemAlert} role="alert" aria-live="assertive">
+                  {systemAlert}
+                </div>
+              )}
+
               <div className={styles.statusPillsWrap}>
                 <div className={styles.statusItem}>
                   <span className={styles.statusLabel}>Status palang</span>
@@ -290,6 +350,22 @@ export default function ViewDashboard() {
                   >
                     {trainStatus}
                   </span>
+                </div>
+
+                <div className={styles.statusItem}>
+                  <span className={styles.statusLabel}>Sensor</span>
+                  <span
+                    className={`${styles.stateBadge} ${
+                      sensorStatus === 'aktif' ? styles.stateSafe : styles.stateDanger
+                    }`}
+                  >
+                    {sensorStatus}
+                  </span>
+                </div>
+
+                <div className={styles.statusItem}>
+                  <span className={styles.statusLabel}>Arah kereta</span>
+                  <span className={`${styles.stateBadge} ${styles.stateInfo}`}>{directionLabel}</span>
                 </div>
               </div>
 
@@ -318,6 +394,14 @@ export default function ViewDashboard() {
                   </span>
                   <span className={styles.switchLabel}>Mode {isAutomatic ? 'otomatis' : 'manual'}</span>
                 </label>
+
+                <button
+                  type="button"
+                  className={`${styles.controlButton} ${sensorStatus === 'aktif' ? styles.controlButtonSensorOn : styles.controlButtonSensorOff}`}
+                  onClick={handleToggleSensor}
+                >
+                  Sensor {sensorStatus === 'aktif' ? 'aktif' : 'nonaktif'}
+                </button>
               </div>
             </div>
 
@@ -327,6 +411,16 @@ export default function ViewDashboard() {
                 <span />
               </div>
 
+              <div className={styles.directionSign}>
+                <span className={styles.directionText}>Arah: {directionLabel}</span>
+                <span
+                  className={`${styles.directionArrow} ${
+                    trainDirection === 'kanan' ? styles.directionArrowLeft : styles.directionArrowRight
+                  }`}
+                  aria-hidden="true"
+                />
+              </div>
+
               <div className={styles.barrierUnit}>
                 <span className={styles.barrierPole} />
                 <span className={`${styles.barrierArm} ${gateStatus === 'tertutup' ? styles.barrierArmDown : styles.barrierArmUp}`} />
@@ -334,15 +428,7 @@ export default function ViewDashboard() {
 
               <div className={styles.railLine} />
 
-              <div
-                className={`${styles.trainVisual} ${
-                  trainStatus === 'mendekat'
-                    ? styles.trainApproaching
-                    : trainStatus === 'lewat'
-                      ? styles.trainPassing
-                      : styles.trainSafe
-                }`}
-              >
+              <div className={`${styles.trainVisual} ${directionClass}`}>
                 <span className={styles.trainCabin} />
                 <span className={styles.trainWindow} />
                 <span className={styles.trainWheel} />
