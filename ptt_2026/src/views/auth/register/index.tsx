@@ -1,63 +1,44 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '@/utils/db/firebase'
+// import { createUserWithEmailAndPassword } from 'firebase/auth'
+// import { auth } from '@/utils/db/firebase'
 import styles from '@/views/auth/auth.module.css'
-
+import { signUp } from "@/utils/db/firebaseService";
 export default function ViewRegisterPage() {
   const router = useRouter()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('') // <--- Tambah state password
+  const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  // Note: Middleware withAuth.ts lu udah jagain rute, 
-  // jadi useEffect isAuthenticated di sini opsional.
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setIsLoading(true)
-    setMessage('')
+    event.preventDefault();
+    setIsLoading(true); // Aktifin loading biar user tau sistem lagi kerja
 
-    if (!name.trim() || !email.trim() || !password.trim()) {
-      setMessage('Semua data harus diisi, Cik!')
-      setIsLoading(false)
-      return
-    }
+    // Pake State yang udah lu bikin (name, email, password)
+    // Gak perlu event.target.name.value lagi
+    const data = {
+      name: name,
+      email: email,
+      password: password,
+    };
 
-    if (password.length < 6) {
-      setMessage('Password minimal 6 karakter sesuai aturan Firebase.')
-      setIsLoading(false)
-      return
+    const result = await signUp(data);
+    
+    if (result.status) {
+      alert("Akun berhasil dibuat!");
+      router.push("/auth/login");
+    } else {
+      setIsLoading(false);
+      alert("Gagal daftar, coba cek koneksi atau database lu Cik.");
     }
-
-    try {
-      // 1. Daftarin ke Firebase Auth
-      await createUserWithEmailAndPassword(auth, email, password)
-      
-      // 2. Kalau sukses, arahin ke login biar user masuk pake kredensial baru
-      // Nama petugas bisa lu simpen di profile Firebase nanti kalau perlu
-      router.replace('/auth/login')
-    } catch (error: any) {
-      setIsLoading(false)
-      if (error.code === 'auth/email-already-in-use') {
-        setMessage('Email udah kepake. Pake email lain dah.')
-      } else if (error.code === 'auth/invalid-email') {
-        setMessage('Format email lu salah, Cik.')
-      } else {
-        setMessage('Gagal daftar: ' + error.message)
-      }
-    }
-  }
+  };
 
   return (
     <>
-      <Head>
-        <title>Register - NeoGate</title>
-      </Head>
-
+      <Head><title>Register - NeoGate</title></Head>
       <main className={styles.page}>
         <section className={styles.shell}>
           <div className={styles.hero}>
@@ -67,7 +48,7 @@ export default function ViewRegisterPage() {
                 <h1 className={styles.title}>Buat akun</h1>
               </div>
               <p className={styles.description}>
-                Registrasi dipakai sebagai gerbang awal untuk mendapatkan akses kontrol penuh 
+                Registrasi dipakai sebagai gerbang awal untuk mendapatkan akses kontrol penuh
                 ke sistem monitoring palang kereta NeoGate.
               </p>
             </div>
@@ -80,7 +61,7 @@ export default function ViewRegisterPage() {
                 <p className={styles.formSubtitle}>Gunakan email aktif untuk mendaftarkan akun baru.</p>
               </div>
 
-              {message ? <div className={styles.alert}>{message}</div> : null}
+              {message && <div className={styles.alert}>{message}</div>}
 
               <form className={styles.form} onSubmit={handleSubmit}>
                 <label className={styles.field}>
@@ -88,8 +69,8 @@ export default function ViewRegisterPage() {
                   <input
                     className={styles.input}
                     type="text"
-                    value={name}
-                    onChange={(event) => setName(event.target.value)}
+                    value={name} // State name
+                    onChange={(e) => setName(e.target.value)}
                     placeholder="Contoh: Fandy Wahyu"
                     required
                   />
@@ -100,8 +81,8 @@ export default function ViewRegisterPage() {
                   <input
                     className={styles.input}
                     type="email"
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
+                    value={email} // State email
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder="nama@email.com"
                     required
                   />
@@ -112,16 +93,16 @@ export default function ViewRegisterPage() {
                   <input
                     className={styles.input}
                     type="password"
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
+                    value={password} // State password
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="Minimal 6 karakter"
                     required
                   />
                 </label>
 
-                <button 
-                  className={styles.buttonPrimary} 
-                  type="submit" 
+                <button
+                  className={styles.buttonPrimary}
+                  type="submit"
                   disabled={isLoading}
                 >
                   {isLoading ? 'Mendaftarkan...' : 'Buat Akun'}
@@ -129,9 +110,7 @@ export default function ViewRegisterPage() {
               </form>
               <div className={styles.linkRow}>
                 <span>Sudah punya akun?</span>
-                <a className={styles.switchLink} href="/auth/login">
-                  Login di sini
-                </a>
+                <a className={styles.switchLink} href="/auth/login">Login di sini</a>
               </div>
             </div>
           </div>
