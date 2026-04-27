@@ -76,22 +76,22 @@ export default function SettingsPage() {
         <div className={dashboardStyles.topBar}>
           <div className={dashboardStyles.brandTop}>NeoGate</div>
 
-          <label className={dashboardStyles.search}>
-            <span className={dashboardStyles.searchIcon}>
+          <label className={styles.search}>
+            <span className={styles.searchIcon}>
               <SearchIcon />
             </span>
-            <input type="text" placeholder="Search setting options..." />
+            <input className={styles.searchInput} type="text" placeholder="Search setting options..." />
           </label>
 
-          <div className={dashboardStyles.topActions}>
-            <button className={dashboardStyles.iconButton} type="button" aria-label="Notifications">
+          <div className={`${dashboardStyles.topActions} ${styles.settingsTopActions}`}>
+            <button className={styles.iconButton} type="button" aria-label="Notifications">
               <BellIcon />
             </button>
-            <button className={dashboardStyles.iconButton} type="button" aria-label="Settings">
+            <button className={styles.iconButton} type="button" aria-label="Settings">
               <SettingsIcon />
             </button>
-            <div className={dashboardStyles.profileCard}>
-              <div className={dashboardStyles.avatar}>F</div>
+            <div className={`${dashboardStyles.profileCard} ${styles.settingsProfileCard}`}>
+              <div className={dashboardStyles.avatar}>{userName.charAt(0).toUpperCase()}</div>
               <div>
                 <div className={dashboardStyles.profileName}>{userName}</div>
                 <div className={dashboardStyles.profileRole}>Operational Tier 1</div>
@@ -216,7 +216,7 @@ export default function SettingsPage() {
               </form>
             </article>
 
-            <article className={styles.panel}>
+            {/* <article className={styles.panel}>
               <h2>Manajemen User (Opsional)</h2>
               <p className={styles.panelHint}>Kelola pengguna operator untuk akses dashboard.</p>
 
@@ -252,7 +252,7 @@ export default function SettingsPage() {
                   Lihat Daftar User
                 </button>
               </div>
-            </article>
+            </article> */}
           </section>
         </main>
       </div>

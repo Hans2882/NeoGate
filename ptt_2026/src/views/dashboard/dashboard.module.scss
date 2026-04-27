@@ -156,6 +156,60 @@
   background: rgba(49, 82, 161, 0.2);
   color: #fff;
   cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.controlButton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.manualControls {
+  margin-top: 8px;
+  display: grid;
+  gap: 6px;
+}
+
+.manualOpenButton {
+  background: rgba(24, 130, 90, 0.25);
+  border-color: rgba(72, 201, 153, 0.35);
+}
+
+.manualOpenButton:hover:not(:disabled) {
+  background: rgba(24, 130, 90, 0.45);
+  border-color: rgba(126, 235, 196, 0.55);
+  transform: translateY(-1px);
+}
+
+.manualOpenButton:active:not(:disabled) {
+  background: rgba(24, 130, 90, 0.7);
+}
+
+.manualOpenActive {
+  background: rgba(24, 130, 90, 0.9);
+  border-color: rgba(126, 235, 196, 0.85);
+  box-shadow: inset 0 0 0 1px rgba(196, 255, 231, 0.35);
+}
+
+.manualCloseButton {
+  background: rgba(165, 33, 47, 0.25);
+  border-color: rgba(239, 83, 104, 0.35);
+}
+
+.manualCloseButton:hover:not(:disabled) {
+  background: rgba(165, 33, 47, 0.45);
+  border-color: rgba(255, 133, 148, 0.55);
+  transform: translateY(-1px);
+}
+
+.manualCloseButton:active:not(:disabled) {
+  background: rgba(165, 33, 47, 0.7);
+}
+
+.manualCloseActive {
+  background: rgba(165, 33, 47, 0.9);
+  border-color: rgba(255, 133, 148, 0.85);
+  box-shadow: inset 0 0 0 1px rgba(255, 199, 208, 0.35);
 }
 
 .railLine {

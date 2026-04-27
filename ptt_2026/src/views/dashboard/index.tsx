@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import ActivityTable from '@/components/activityTable'
 import Sidebar from '@/components/sidebar'
+import { getSessionUser, logoutUser } from '@/lib/auth'
 import styles from './dashboard.module.scss'
 
 type Activity = { 
@@ -23,7 +24,7 @@ type TrainDirection = 'kanan' | 'kiri'
 export default function ViewDashboard() {
   const router = useRouter()
   const [activities, setActivities] = useState<Activity[]>([])
-  const [userName] = useState('Fandy Wahyu')
+  const [userName, setUserName] = useState('Operator')
   const [gateStatus, setGateStatus] = useState<GateStatus>('terbuka')
   const [trainStatus, setTrainStatus] = useState<TrainStatus>('aman')
   const [controlMode, setControlMode] = useState<ControlMode>('otomatis')
@@ -43,7 +44,9 @@ export default function ViewDashboard() {
           const isTrainComing = latest.status === 'APPROACHING' || latest.status === 'UNPASSED'
           
           setTrainStatus(isTrainComing ? 'mendekat' : 'aman')
-          setGateStatus(isTrainComing ? 'tertutup' : 'terbuka')
+          if (controlMode === 'otomatis') {
+            setGateStatus(isTrainComing ? 'tertutup' : 'terbuka')
+          }
           setTrainDirection(latest.direction === 'Malang' ? 'kanan' : 'kiri')
         }
       } catch (err) {
@@ -54,6 +57,15 @@ export default function ViewDashboard() {
     fetchData()
     const interval = setInterval(fetchData, 3000)
     return () => clearInterval(interval)
+  }, [controlMode])
+
+  useEffect(() => {
+    const sessionUser = getSessionUser()
+    if (sessionUser?.name) {
+      setUserName(sessionUser.name)
+    } else if (sessionUser?.email) {
+      setUserName(sessionUser.email)
+    }
   }, [])
 
   useEffect(() => {
@@ -66,7 +78,17 @@ export default function ViewDashboard() {
     }
   }, [trainStatus, sensorStatus])
 
-  const handleLogout = () => router.push('/auth/login')
+  const handleLogout = () => {
+    logoutUser()
+    router.replace('/auth/login')
+  }
+  const handleOpenGateManual = () => setGateStatus('terbuka')
+  const handleCloseGateManual = () => {
+    const shouldClose = window.confirm('Palang akan ditutup. Lanjutkan?')
+    if (!shouldClose) return
+
+    setGateStatus('tertutup')
+  }
   const directionLabel = trainDirection === 'kanan' ? 'Malang → Surabaya' : 'Surabaya → Malang'
   const trainAnimClass = trainStatus === 'aman' ? '' : (trainDirection === 'kanan' ? styles.trainApproachingFromRight : styles.trainApproachingFromLeft)
 
@@ -88,7 +110,7 @@ export default function ViewDashboard() {
                 <span className={styles.profileName}>{userName}</span>
                 <span className={styles.profileRole}>System Operator</span>
               </div>
-              <div className={styles.avatar}>{userName[0]}</div>
+              <div className={styles.avatar}>{userName.charAt(0).toUpperCase()}</div>
             </div>
             <button className={styles.logoutButton} onClick={handleLogout}>Logout</button>
           </div>
@@ -127,6 +149,23 @@ export default function ViewDashboard() {
               <button className={styles.controlButton} onClick={() => setSensorStatus(s => s === 'aktif' ? 'nonaktif' : 'aktif')}>
                 {sensorStatus === 'aktif' ? 'Matikan Sensor' : 'Aktifkan Sensor'}
               </button>
+
+              <div className={styles.manualControls}>
+                <button
+                  className={`${styles.controlButton} ${styles.manualOpenButton} ${gateStatus === 'terbuka' ? styles.manualOpenActive : ''}`}
+                  onClick={handleOpenGateManual}
+                  disabled={controlMode !== 'manual'}
+                >
+                  Buka Palang (Manual)
+                </button>
+                <button
+                  className={`${styles.controlButton} ${styles.manualCloseButton} ${gateStatus === 'tertutup' ? styles.manualCloseActive : ''}`}
+                  onClick={handleCloseGateManual}
+                  disabled={controlMode !== 'manual'}
+                >
+                  Tutup Palang (Manual)
+                </button>
+              </div>
             </section>
 
             <section className={styles.visualPanel}>

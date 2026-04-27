@@ -1,4 +1,85 @@
+.search {
+  flex: 1;
+  max-width: 520px;
+  min-width: 220px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid rgba(123, 149, 217, 0.16);
+  background: rgba(24, 35, 60, 0.7);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+}
+
+.searchIcon {
+  width: 18px;
+  height: 18px;
+  color: #8ba4d9;
+  display: inline-flex;
+}
+
+.searchIcon svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  fill: none;
+}
+
+.searchInput {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #e5edff;
+  font-size: 14px;
+}
+
+.searchInput::placeholder {
+  color: #8fa2c9;
+}
+
+.settingsTopActions {
+  gap: 14px;
+}
+
+.settingsProfileCard {
+  padding-right: 14px;
+  gap: 12px;
+}
+
+.iconButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(123, 149, 217, 0.2);
+  background: rgba(67, 94, 156, 0.22);
+  color: #dce8ff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.iconButton:hover {
+  background: rgba(89, 118, 188, 0.32);
+  border-color: rgba(143, 170, 235, 0.3);
+}
+
+.iconButton svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  fill: none;
+}
+
 .settingsContent {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   padding: 8px 48px 40px;
 }
 
@@ -140,6 +221,11 @@
 }
 
 @media (max-width: 1080px) {
+  .search {
+    max-width: 380px;
+    min-width: 180px;
+  }
+
   .settingsContent {
     padding-left: 24px;
     padding-right: 24px;
@@ -147,5 +233,20 @@
 
   .settingsGrid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 840px) {
+  .search {
+    display: none;
+  }
+
+  .settingsTopActions {
+    gap: 10px;
+  }
+
+  .settingsProfileCard {
+    border-right: none;
+    padding-right: 0;
   }
 }
