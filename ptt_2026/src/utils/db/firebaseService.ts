@@ -1,6 +1,8 @@
 import { db } from "./firebase";
 import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
 import bcrypt from "bcryptjs";
+import { rtdb } from "./firebase";
+import { ref, onValue, set, push, serverTimestamp } from "firebase/database";
 
 const usersCollection = collection(db, "users");
 
@@ -18,7 +20,7 @@ export const signUp = async (userData: any) => {
       role: "operator",
       createdAt: new Date().toISOString()
     });
-    
+
     return { status: true, id: docRef.id };
   } catch (error) {
     return { status: false, message: error };
@@ -40,9 +42,9 @@ export const signIn = async (email: string, pass: string) => {
     const isMatch = bcrypt.compareSync(pass, userData.password);
 
     if (isMatch) {
-      return { 
-        status: true, 
-        data: { id: userDoc.id, name: userData.name, email: userData.email } 
+      return {
+        status: true,
+        data: { id: userDoc.id, name: userData.name, email: userData.email }
       };
     } else {
       return { status: false, message: "Password salah!" };
@@ -51,3 +53,37 @@ export const signIn = async (email: string, pass: string) => {
     return { status: false, message: error };
   }
 };
+
+export const listenSystemStatus = (callback: (data: any) => void) => {
+  const statusRef = ref(rtdb, 'system_monitor');
+  return onValue(statusRef, (snapshot) => {
+    const data = snapshot.val();
+    callback(data);
+  });
+};
+
+export const listenActivities = (callback: (data: any[]) => void) => {
+  const activityRef = ref(rtdb, 'activities');
+  return onValue(activityRef, (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      // Konversi objek JSON Firebase ke Array agar bisa di-map di table
+      const formatted = Object.keys(data).map(key => ({
+        id: key,
+        ...data[key]
+      })).reverse(); // Data terbaru di atas
+      callback(formatted);
+    } else {
+      callback([]);
+    }
+  });
+};
+
+export const updateControlMode = async (mode: 'otomatis' | 'manual') => {
+  try {
+    await set(ref(rtdb, 'system_monitor/controlMode'), mode);
+  } catch (error) {
+    console.error("Gagal update mode:", error);
+  }
+};
+

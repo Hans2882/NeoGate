@@ -1,6 +1,13 @@
+import { auth } from "@/utils/db/firebase";
+import { signOut } from "firebase/auth";
+
 export const loginmanual = (data: any) => {
-  localStorage.setItem("isLogin", "true");
-  document.cookie = "isLogin=true; path=/"; 
+  if (typeof window !== "undefined") {
+    localStorage.setItem("isLogin", "true");
+
+    localStorage.setItem("user", JSON.stringify(data)); 
+    document.cookie = "isLogin=true; path=/";
+  }
 };
 
 export const isAuthenticated = () => {
@@ -21,15 +28,24 @@ export const getSessionUser = () => {
   }
 };
 
-export const logoutUser = () => {
+
+export const logoutUser = async () => {
   if (typeof window === "undefined") return;
 
-  localStorage.removeItem("isLogin");
-  localStorage.removeItem("user");
-  document.cookie = "isLogin=; Max-Age=0; path=/";
-};
+  try {
 
-export const logoutManual = () => {
-  localStorage.removeItem("isLogin");
-  document.cookie = "isLogin=; Max-Age=0; path=/";
+    await signOut(auth);
+
+   
+    localStorage.removeItem("isLogin");
+    localStorage.removeItem("user");
+
+    
+    document.cookie = "isLogin=; Max-Age=0; path=/";
+    
+    return true;
+  } catch (error) {
+    console.error("Error saat logout:", error);
+    return false;
+  }
 };
