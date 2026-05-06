@@ -5,7 +5,7 @@ import ActivityTable from '@/components/activityTable'
 import Sidebar from '@/components/sidebar'
 import styles from './dashboard.module.scss'
 import { listenSystemStatus, listenActivities, updateControlMode } from '@/utils/db/firebaseService'
-import { logoutUser } from '@/lib/auth'
+import { getSessionUserName, isAuthenticated, logoutUser } from '@/lib/auth'
 
 type Activity = { 
   id?: string;
@@ -24,13 +24,24 @@ type TrainDirection = 'kanan' | 'kiri'
 export default function ViewDashboard() {
   const router = useRouter()
   const [activities, setActivities] = useState<Activity[]>([])
-  const [userName] = useState('Fandy Wahyu')
+  const [userName, setUserName] = useState('')
+  const [authChecked, setAuthChecked] = useState(false)
   const [gateStatus, setGateStatus] = useState<GateStatus>('terbuka')
   const [trainStatus, setTrainStatus] = useState<TrainStatus>('aman')
   const [controlMode, setControlMode] = useState<ControlMode>('otomatis')
   const [sensorStatus, setSensorStatus] = useState<SensorStatus>('aktif')
   const [trainDirection, setTrainDirection] = useState<TrainDirection>('kanan')
   const [systemAlert, setSystemAlert] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.replace('/auth/login')
+      return
+    }
+
+    setUserName(getSessionUserName() || 'Operator')
+    setAuthChecked(true)
+  }, [router])
 
   // 1. Integrasi Listener Real-time Firebase
   useEffect(() => {
@@ -84,6 +95,10 @@ export default function ViewDashboard() {
   
   const directionLabel = trainDirection === 'kanan' ? 'Malang → Surabaya' : 'Surabaya → Malang'
   
+  if (!authChecked) {
+    return null
+  }
+
   return (
     <div className={styles.page}>
       <Head><title>Dashboard — NeoGate</title></Head>

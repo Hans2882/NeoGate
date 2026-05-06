@@ -90,13 +90,6 @@ export default function ViewLoginPage() {
                   {isLoading ? 'Lagi loading...' : 'Masuk ke Dashboard'}
                 </button>
               </form>
-
-              <div className={styles.linkRow}>
-                <span>Belum punya akses?</span>
-                <a className={styles.switchLink} href="/auth/register">
-                  Daftar Petugas Baru
-                </a>
-              </div>
             </div>
           </div>
         </section>

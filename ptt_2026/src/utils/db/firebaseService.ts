@@ -42,9 +42,11 @@ export const signIn = async (email: string, pass: string) => {
     const isMatch = bcrypt.compareSync(pass, userData.password);
 
     if (isMatch) {
+      const userName = userData.name || userData.fullname || userData.fullName || userData.displayName;
+
       return {
         status: true,
-        data: { id: userDoc.id, name: userData.name, email: userData.email }
+        data: { id: userDoc.id, name: userName, email: userData.email }
       };
     } else {
       return { status: false, message: "Password salah!" };
@@ -86,4 +88,3 @@ export const updateControlMode = async (mode: 'otomatis' | 'manual') => {
     console.error("Gagal update mode:", error);
   }
 };
-

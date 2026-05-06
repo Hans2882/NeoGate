@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Sidebar from '../components/sidebar'
-import { getSessionUser, isAuthenticated, logoutUser } from '../lib/auth'
+import { getSessionUserName, isAuthenticated, logoutUser } from '../lib/auth'
 import dashboardStyles from '../views/dashboard/dashboard.module.scss'
 import styles from '../styles/settings.module.scss'
 
@@ -35,7 +35,7 @@ function SettingsIcon() {
 
 export default function SettingsPage() {
   const router = useRouter()
-  const [userName, setUserName] = useState('Fandy')
+  const [userName, setUserName] = useState('')
   const [authChecked, setAuthChecked] = useState(false)
   const [defaultMode, setDefaultMode] = useState<'otomatis' | 'manual'>('otomatis')
   const [gateDelay, setGateDelay] = useState(12)
@@ -43,21 +43,18 @@ export default function SettingsPage() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.replace('/login')
+      router.replace('/auth/login')
       return
     }
 
-    const sessionUser = getSessionUser()
-    if (sessionUser?.name) {
-      setUserName(sessionUser.name)
-    }
+    setUserName(getSessionUserName() || 'Operator')
 
     setAuthChecked(true)
   }, [router])
 
   const handleLogout = () => {
     logoutUser()
-    router.replace('/login')
+    router.replace('/auth/login')
   }
 
   if (!authChecked) {
