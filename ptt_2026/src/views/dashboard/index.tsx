@@ -175,12 +175,37 @@ export default function ViewDashboard() {
             </section>
 
             <section className={styles.visualPanel}>
-              <div style={{marginBottom: '20px'}}>Arah: <strong>{directionLabel}</strong></div>
-              <div className={styles.barrierUnit}>
-                {/* Animasi Palang berdasarkan state real-time */}
-                <div className={`${styles.barrierArm} ${gateStatus === 'tertutup' ? styles.barrierArmDown : styles.barrierArmUp}`} />
-              </div>
-              <div className={styles.railLine} />
+              <article className={styles.routeCard}>
+                <h3 className={styles.routeTitle}>Rute</h3>
+
+                <div className={styles.routeBody}>
+                  <div className={styles.routeSide}>
+                    <p className={styles.routeTime}>11.00</p>
+                    <p className={styles.routeCode}>MLG</p>
+                    <p className={styles.routeCity}>Malang</p>
+                  </div>
+
+                  <div className={styles.routeArrowWrap} aria-hidden="true">
+                    <span className={styles.routeArrowLine} />
+                    <span className={styles.routeArrowHead} />
+                  </div>
+
+                  <div className={styles.routeSide}>
+                    <p className={styles.routeTime}>12.30</p>
+                    <p className={styles.routeCode}>SBY</p>
+                    <p className={styles.routeCity}>Surabaya</p>
+                  </div>
+                </div>
+
+                <div className={styles.routeHint}>
+                  <span className={styles.routeHintIcon}>i</span>
+                  <p>
+                    Ini adalah prediksi keberangkatan dan kedatangan, jadwal bisa saja berubah tergantung kondisi.
+                  </p>
+                </div>
+
+                <p className={styles.routeDirection}>Arah aktif: {directionLabel}</p>
+              </article>
             </section>
 
           </div>
