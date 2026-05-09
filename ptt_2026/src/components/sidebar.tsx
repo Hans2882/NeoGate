@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import styles from '@/styles/components/components.module.scss'
+import { getSessionUserRole } from '@/lib/auth'
 
 interface SidebarProps {
   active?: 'dashboard' | 'settings' | 'admin'
@@ -48,6 +49,13 @@ function UserPlusIcon() {
 }
 
 export default function Sidebar({ active = 'dashboard' }: SidebarProps) {
+  const [showAdminMenu, setShowAdminMenu] = useState(false)
+
+  useEffect(() => {
+    const role = getSessionUserRole()
+    setShowAdminMenu(role === 'admin' || role === 'superadmin')
+  }, [])
+
   return (
     <aside className={styles.sidebar}>
       <div className={styles.brand}>
@@ -73,12 +81,14 @@ export default function Sidebar({ active = 'dashboard' }: SidebarProps) {
           </span>
           Settings
         </a>
-        <a className={`${styles.navItem} ${active === 'admin' ? styles.navItemActive : ''}`} href="/admin/operators">
-          <span className={styles.navIcon}>
-            <UserPlusIcon />
-          </span>
-          Admin Operator
-        </a>
+        {showAdminMenu && (
+          <a className={`${styles.navItem} ${active === 'admin' ? styles.navItemActive : ''}`} href="/admin/operators">
+            <span className={styles.navIcon}>
+              <UserPlusIcon />
+            </span>
+            Admin Operator
+          </a>
+        )}
         
       </nav>
 
