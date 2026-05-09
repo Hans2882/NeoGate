@@ -3,7 +3,7 @@ import Image from 'next/image'
 import styles from '@/styles/components/components.module.scss'
 
 interface SidebarProps {
-  active?: 'dashboard' | 'settings'
+  active?: 'dashboard' | 'settings' | 'admin'
 }
 
 function GridIcon() {
@@ -36,6 +36,17 @@ function HelpIcon() {
   )
 }
 
+function UserPlusIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="9" cy="8" r="3.5" />
+      <path d="M3.5 18.5c.7-2.8 2.8-4.5 5.5-4.5s4.8 1.7 5.5 4.5" />
+      <path d="M18 8v6" />
+      <path d="M15 11h6" />
+    </svg>
+  )
+}
+
 export default function Sidebar({ active = 'dashboard' }: SidebarProps) {
   return (
     <aside className={styles.sidebar}>
@@ -61,6 +72,12 @@ export default function Sidebar({ active = 'dashboard' }: SidebarProps) {
             <GearIcon />
           </span>
           Settings
+        </a>
+        <a className={`${styles.navItem} ${active === 'admin' ? styles.navItemActive : ''}`} href="/admin/operators">
+          <span className={styles.navIcon}>
+            <UserPlusIcon />
+          </span>
+          Admin Operator
         </a>
         
       </nav>

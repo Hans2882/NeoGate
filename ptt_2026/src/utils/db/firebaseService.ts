@@ -1,42 +1,30 @@
 import { db } from "./firebase";
-import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import bcrypt from "bcryptjs";
 import { rtdb } from "./firebase";
 import { ref, onValue, set, push, serverTimestamp } from "firebase/database";
 
 const usersCollection = collection(db, "users");
 
-export const signUp = async (userData: any) => {
-  try {
-    // 1. Hash password sebelum simpen (Manual Security)
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword = bcrypt.hashSync(userData.password, salt);
-
-    // 2. Simpan ke Firestore collection 'users'
-    const docRef = await addDoc(usersCollection, {
-      name: userData.name,
-      email: userData.email,
-      password: hashedPassword,
-      role: "operator",
-      createdAt: new Date().toISOString()
-    });
-
-    return { status: true, id: docRef.id };
-  } catch (error) {
-    return { status: false, message: error };
-  }
-};
-
 export const signIn = async (email: string, pass: string) => {
   try {
     // 1. Cari user berdasarkan email
-    const q = query(usersCollection, where("email", "==", email));
+    const q = query(usersCollection, where("email", "==", email.trim().toLowerCase()));
     const snapshot = await getDocs(q);
 
     if (snapshot.empty) return { status: false, message: "User kaga ada!" };
 
     const userDoc = snapshot.docs[0];
     const userData = userDoc.data();
+
+    if (userData.isActive === false) {
+      return { status: false, message: "Akun nonaktif. Hubungi superadmin."};
+    }
+
+    const role = userData.role || "operator";
+    if (role !== "operator" && role !== "admin" && role !== "superadmin") {
+      return { status: false, message: "Role akun tidak valid." };
+    }
 
     // 2. Cek Password (Bandingin teks biasa sama yang di-hash)
     const isMatch = bcrypt.compareSync(pass, userData.password);
@@ -46,11 +34,38 @@ export const signIn = async (email: string, pass: string) => {
 
       return {
         status: true,
-        data: { id: userDoc.id, name: userName, email: userData.email }
+        data: { id: userDoc.id, name: userName, email: userData.email, role }
       };
     } else {
       return { status: false, message: "Password salah!" };
     }
+  } catch (error) {
+    return { status: false, message: error };
+  }
+};
+
+export const createOperatorByAdmin = async (payload: { name: string; email: string; password: string; createdBy?: string }) => {
+  try {
+    const normalizedEmail = payload.email.trim().toLowerCase();
+    const q = query(usersCollection, where("email", "==", normalizedEmail));
+    const existing = await getDocs(q);
+
+    if (!existing.empty) {
+      return { status: false, message: "Email sudah terdaftar." };
+    }
+
+    const hashedPassword = bcrypt.hashSync(payload.password, bcrypt.genSaltSync(10));
+    const docRef = await addDoc(usersCollection, {
+      name: payload.name.trim(),
+      email: normalizedEmail,
+      password: hashedPassword,
+      role: "operator",
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      createdBy: payload.createdBy || "admin"
+    });
+
+    return { status: true, id: docRef.id };
   } catch (error) {
     return { status: false, message: error };
   }

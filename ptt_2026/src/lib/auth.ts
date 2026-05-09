@@ -8,6 +8,7 @@ type SessionUser = {
   fullName?: string;
   displayName?: string;
   email?: string;
+  role?: string;
 };
 
 export const loginmanual = (data: any) => {
@@ -40,6 +41,11 @@ export const getSessionUser = () => {
 export const getSessionUserName = () => {
   const user = getSessionUser();
   return user?.name || user?.fullname || user?.fullName || user?.displayName || user?.email || null;
+};
+
+export const getSessionUserRole = () => {
+  const user = getSessionUser();
+  return user?.role || null;
 };
 
 export const logoutUser = async () => {

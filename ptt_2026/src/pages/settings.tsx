@@ -2,7 +2,8 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Sidebar from '../components/sidebar'
-import { getSessionUserName, isAuthenticated, logoutUser } from '../lib/auth'
+import { getSessionUser, getSessionUserName, getSessionUserRole, isAuthenticated, logoutUser } from '../lib/auth'
+import { createOperatorByAdmin } from '../utils/db/firebaseService'
 import dashboardStyles from '../views/dashboard/dashboard.module.scss'
 import styles from '../styles/settings.module.scss'
 
@@ -40,6 +41,12 @@ export default function SettingsPage() {
   const [defaultMode, setDefaultMode] = useState<'otomatis' | 'manual'>('otomatis')
   const [gateDelay, setGateDelay] = useState(12)
   const [notificationsEnabled, setNotificationsEnabled] = useState(true)
+  const [role, setRole] = useState('')
+  const [newOperatorName, setNewOperatorName] = useState('')
+  const [newOperatorEmail, setNewOperatorEmail] = useState('')
+  const [newOperatorPassword, setNewOperatorPassword] = useState('')
+  const [createOperatorLoading, setCreateOperatorLoading] = useState(false)
+  const [createOperatorMessage, setCreateOperatorMessage] = useState('')
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -47,10 +54,51 @@ export default function SettingsPage() {
       return
     }
 
-    setUserName(getSessionUserName() || 'Operator')
+    const sessionRole = getSessionUserRole()
+    if (sessionRole !== 'admin' && sessionRole !== 'superadmin') {
+      router.replace('/dashboard')
+      return
+    }
 
+    setRole(sessionRole)
+    setUserName(getSessionUserName() || 'Operator')
     setAuthChecked(true)
   }, [router])
+
+  const handleCreateOperator = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setCreateOperatorMessage('')
+
+    if (role !== 'admin' && role !== 'superadmin') {
+      setCreateOperatorMessage('Hanya admin yang bisa menambah operator.')
+      return
+    }
+
+    if (newOperatorPassword.length < 6) {
+      setCreateOperatorMessage('Password minimal 6 karakter.')
+      return
+    }
+
+    setCreateOperatorLoading(true)
+    const sessionUser = getSessionUser()
+    const result = await createOperatorByAdmin({
+      name: newOperatorName,
+      email: newOperatorEmail,
+      password: newOperatorPassword,
+      createdBy: sessionUser?.email || userName
+    })
+
+    if (result.status) {
+      setCreateOperatorMessage('Operator berhasil ditambahkan.')
+      setNewOperatorName('')
+      setNewOperatorEmail('')
+      setNewOperatorPassword('')
+    } else {
+      setCreateOperatorMessage(String(result.message || 'Gagal menambah operator.'))
+    }
+
+    setCreateOperatorLoading(false)
+  }
 
   const handleLogout = () => {
     logoutUser()
@@ -213,43 +261,56 @@ export default function SettingsPage() {
               </form>
             </article>
 
-            {/* <article className={styles.panel}>
-              <h2>Manajemen User (Opsional)</h2>
-              <p className={styles.panelHint}>Kelola pengguna operator untuk akses dashboard.</p>
+            <article className={styles.panel}>
+              <h2>Manajemen Operator</h2>
+              <p className={styles.panelHint}>Tambahkan akun operator baru yang bisa login ke dashboard.</p>
 
-              <form className={styles.formGrid}>
+              {createOperatorMessage && <div className={styles.panelHint}>{createOperatorMessage}</div>}
+
+              <form className={styles.formGrid} onSubmit={handleCreateOperator}>
                 <label className={styles.fieldLabel}>
-                  Nama User Baru
-                  <input className={styles.input} type="text" placeholder="Contoh: Operator Stasiun A" />
+                  Nama Operator
+                  <input
+                    className={styles.input}
+                    type="text"
+                    placeholder="Contoh: Operator Stasiun A"
+                    value={newOperatorName}
+                    onChange={(event) => setNewOperatorName(event.target.value)}
+                    required
+                  />
                 </label>
 
                 <label className={styles.fieldLabel}>
-                  Role
-                  <select className={styles.select} defaultValue="operator">
-                    <option value="operator">Operator</option>
-                    <option value="supervisor">Supervisor</option>
-                    <option value="admin">Admin</option>
-                  </select>
+                  Email Operator
+                  <input
+                    className={styles.input}
+                    type="email"
+                    placeholder="operator@email.com"
+                    value={newOperatorEmail}
+                    onChange={(event) => setNewOperatorEmail(event.target.value)}
+                    required
+                  />
                 </label>
 
                 <label className={styles.fieldLabel}>
-                  Status Akun
-                  <select className={styles.select} defaultValue="active">
-                    <option value="active">Aktif</option>
-                    <option value="inactive">Nonaktif</option>
-                  </select>
+                  Password Operator
+                  <input
+                    className={styles.input}
+                    type="password"
+                    placeholder="Minimal 6 karakter"
+                    value={newOperatorPassword}
+                    onChange={(event) => setNewOperatorPassword(event.target.value)}
+                    required
+                  />
                 </label>
+
+                <div className={styles.actions}>
+                  <button type="submit" className={styles.buttonPrimary} disabled={createOperatorLoading}>
+                    {createOperatorLoading ? 'Menyimpan...' : 'Tambah Operator'}
+                  </button>
+                </div>
               </form>
-
-              <div className={styles.actions}>
-                <button type="button" className={styles.buttonPrimary}>
-                  Tambah User
-                </button>
-                <button type="button" className={styles.buttonGhost}>
-                  Lihat Daftar User
-                </button>
-              </div>
-            </article> */}
+            </article>
           </section>
         </main>
       </div>

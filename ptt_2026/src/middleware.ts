@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
   const isLogin = request.cookies.get('isLogin')?.value
 
   const { pathname } = request.nextUrl
-  if (!isLogin && pathname.startsWith('/dashboard')) {
+  if (!isLogin && (pathname.startsWith('/dashboard') || pathname.startsWith('/admin'))) {
     return NextResponse.redirect(new URL('/auth/login', request.url))
   }
   if (isLogin && pathname.startsWith('/auth')) {
@@ -16,5 +16,5 @@ export function middleware(request: NextRequest) {
   return NextResponse.next()
 }
 export const config = {
-  matcher: ['/dashboard/:path*', '/auth/:path*'],
+  matcher: ['/dashboard/:path*', '/admin/:path*', '/auth/:path*'],
 }
