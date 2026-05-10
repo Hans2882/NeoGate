@@ -184,15 +184,16 @@ export default function ViewDashboard() {
                   <span>Mode</span>
                   <span style={{ color: '#66a1ff' }}>{controlMode.toUpperCase()}</span>
                 </div>
-              </div>
-
-              <button className={styles.controlButton} onClick={handleToggleMode}>
+                <button className={styles.controlButton} onClick={handleToggleMode}>
                 Ubah ke {controlMode === 'otomatis' ? 'Manual' : 'Otomatis'}
               </button>
 
               <button className={styles.controlButton} style={{ opacity: 0.7 }}>
                 {sensorStatus === 'aktif' ? 'Matikan Sensor' : 'Aktifkan Sensor'}
               </button>
+              </div>
+
+              
             </section>
 
             <section className={styles.visualPanel}>
@@ -219,8 +220,14 @@ export default function ViewDashboard() {
                 </div>
 
                 <div className={styles.routeHint}>
-                  <span className={styles.routeHintIcon}>i</span>
-                  <p>Ini adalah prediksi keberangkatan dan kedatangan, jadwal bisa saja berubah tergantung kondisi.</p>
+                  <div className={styles.routeHintContent}>
+                    <span className={styles.routeHintIcon}>i</span>
+                    <div className={styles.routeHintText}>
+                      <p>
+                        Ini adalah prediksi keberangkatan dan kedatangan, jadwal bisa saja berubah tergantung kondisi.
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 <p className={styles.routeDirection}>Arah aktif: {directionLabel}</p>

@@ -60,9 +60,7 @@ export default function Sidebar({ active = 'dashboard', isOpen = false }: Sideba
   return (
     <aside className={`${styles.sidebar} ${isOpen ? styles.sidebarOpen : styles.sidebarClosed}`}>
       <div className={styles.brand}>
-        <div className={styles.logo}>
-          <Image src="/logo2.png" alt="NeoGate logo" width={64} height={64} priority />
-        </div>
+          
         <div>
           <div className={styles.brandTitle}>Sistem Deteksi Palang Kereta</div>
           <div className={styles.brandSub}>Network Node 04</div>

@@ -79,7 +79,7 @@
 
 .topActions {
   display: flex;
-  align-items: center;
+  align-items: center;    
   gap: 24px;
 }
 
@@ -179,23 +179,32 @@
 .routeCard {
   width: 100%;
   max-width: 760px;
-  margin: 0 auto;
-  padding: 5px 30px 5px;
+  padding: 5px 10px 5px;
 }
 
 .routeTitle {
   font-size: 25px;
   font-weight: 700;
   line-height: 1.1;
-  text-align: center;
+
   color: #f1f5ff;
   top: -30px;
+  right: -600px;
 }
 
 .routeBody {
   display: grid;
   grid-template-columns: 1fr 220px 1fr;
   align-items: center;
+  gap: 10px;
+
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+
+  position: relative;
+  top: 15px;
+  left: 75px; /* hapus/ubah offset manual */
 }
 
 .routeSide {
@@ -255,38 +264,49 @@
 
 .routeHint {
   margin-top: 26px;
+}
+
+.routeHintContent {
   display: grid;
   grid-template-columns: 32px 1fr;
   align-items: start;
   gap: 12px;
+  transform: scale(0.7);
+  position: relative;
+  top: 10px;
+  left: -110px;
 }
 
 .routeHintIcon {
   position: relative;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 999px;
   border: 2px solid rgba(213, 227, 255, 0.82);
   color: #d5e3ff;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700; 
   top: 12px;
 }
 
 .routeHint p {
-  font-size: 22px;
+  font-size: 20px;
   line-height: 1.35;
   color: #cad8f8;
 }
 
 .routeDirection {
   margin-top: 16px;
-  text-align: center;
-  font-size: 18px;
+  font-size: 15px;
   color: #90a9de;
+}
+
+.statusPillsWrap {
+  margin-top: 25px; 
+  
 }
 
 .statusItem {
@@ -294,7 +314,7 @@
   justify-content: space-between;
   padding: 14px;
   background: rgba(10, 15, 28, 0.5);
-  margin-top: 15px;
+  margin-top: 5px;
   border-radius: 12px;
   margin-bottom: 8px;
 }
