@@ -88,14 +88,6 @@
   stroke-linejoin: round;
 }
 
-.brandTitle {
-  max-width: 148px;
-  font-size: 18px;
-  line-height: 1.2;
-  font-weight: 700;
-  color: #f2f6ff;
-}
-
 .brandSub {
   margin-top: 22px;
   font-size: 12px;
@@ -161,15 +153,27 @@
 .emergency {
   width: 100%;
   min-height: 58px;
-  border: none;
-  border-radius: 10px;
-  background: #ef2426;
-  color: #2b0506;
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.03em;
+  border: 1px solid rgba(255, 112, 125, 0.34);
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgba(142, 37, 54, 0.42), rgba(89, 21, 39, 0.42)),
+    rgba(16, 25, 48, 0.86);
+  color: #ffd4d9;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   cursor: pointer;
-  box-shadow: 0 20px 40px rgba(239, 36, 38, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 18px 38px rgba(93, 18, 31, 0.2);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.emergency:hover {
+  border-color: rgba(255, 136, 148, 0.62);
+  background:
+    linear-gradient(180deg, rgba(179, 48, 64, 0.58), rgba(116, 25, 45, 0.58)),
+    rgba(18, 29, 57, 0.9);
+  color: #fff1f3;
+  transform: translateY(-1px);
 }
 
 .helpCenter {
