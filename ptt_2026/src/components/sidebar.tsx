@@ -5,6 +5,7 @@ import { getSessionUserRole } from '@/lib/auth'
 
 interface SidebarProps {
   active?: 'dashboard' | 'settings' | 'admin'
+  isOpen?: boolean
 }
 
 function GridIcon() {
@@ -48,7 +49,7 @@ function UserPlusIcon() {
   )
 }
 
-export default function Sidebar({ active = 'dashboard' }: SidebarProps) {
+export default function Sidebar({ active = 'dashboard', isOpen = false }: SidebarProps) {
   const [showAdminMenu, setShowAdminMenu] = useState(false)
 
   useEffect(() => {
@@ -57,7 +58,7 @@ export default function Sidebar({ active = 'dashboard' }: SidebarProps) {
   }, [])
 
   return (
-    <aside className={styles.sidebar}>
+    <aside className={`${styles.sidebar} ${isOpen ? styles.sidebarOpen : styles.sidebarClosed}`}>
       <div className={styles.brand}>
         <div className={styles.logo}>
           <Image src="/logo2.png" alt="NeoGate logo" width={64} height={64} priority />

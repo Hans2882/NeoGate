@@ -7,6 +7,16 @@ import { getSessionUser, getSessionUserName, getSessionUserRole, isAuthenticated
 import dashboardStyles from '@/views/dashboard/dashboard.module.scss'
 import styles from '@/styles/settings.module.scss'
 
+function MenuIcon() {
+  return (
+    <svg viewBox='0 0 24 24' aria-hidden='true'>
+      <path d='M4 7h16' />
+      <path d='M4 12h16' />
+      <path d='M4 17h16' />
+    </svg>
+  )
+}
+
 export default function AdminOperatorsPage() {
   const router = useRouter()
   const [authChecked, setAuthChecked] = useState(false)
@@ -18,6 +28,7 @@ export default function AdminOperatorsPage() {
   const [password, setPassword] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [message, setMessage] = useState('')
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -84,11 +95,23 @@ export default function AdminOperatorsPage() {
         <title>Admin Operator - NeoGate</title>
       </Head>
 
-      <Sidebar active='admin' />
+      {sidebarOpen && <div className={dashboardStyles.sidebarBackdrop} onClick={() => setSidebarOpen(false)} />}
+
+      <Sidebar active='admin' isOpen={sidebarOpen} />
 
       <div className={dashboardStyles.mainContainer}>
         <header className={dashboardStyles.topBar}>
-          <div className={dashboardStyles.brandTop}>NeoGate Admin</div>
+          <div className={dashboardStyles.brandRow}>
+            <button
+              className={dashboardStyles.menuButton}
+              type='button'
+              onClick={() => setSidebarOpen((prev) => !prev)}
+              aria-label='Toggle sidebar'
+            >
+              <MenuIcon />
+            </button>
+            <div className={dashboardStyles.brandTop}>NeoGate Admin</div>
+          </div>
           <div className={dashboardStyles.topActions}>
             <div className={dashboardStyles.profileCard}>
               <div className={dashboardStyles.profileInfo}>

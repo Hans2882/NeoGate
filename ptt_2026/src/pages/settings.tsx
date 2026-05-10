@@ -34,6 +34,16 @@ function SettingsIcon() {
   )
 }
 
+function MenuIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 7h16" />
+      <path d="M4 12h16" />
+      <path d="M4 17h16" />
+    </svg>
+  )
+}
+
 export default function SettingsPage() {
   const router = useRouter()
   const [userName, setUserName] = useState('')
@@ -47,6 +57,7 @@ export default function SettingsPage() {
   const [newOperatorPassword, setNewOperatorPassword] = useState('')
   const [createOperatorLoading, setCreateOperatorLoading] = useState(false)
   const [createOperatorMessage, setCreateOperatorMessage] = useState('')
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -115,11 +126,23 @@ export default function SettingsPage() {
         <title>Settings - NeoGate</title>
       </Head>
 
-      <Sidebar active="settings" />
+      {sidebarOpen && <div className={dashboardStyles.sidebarBackdrop} onClick={() => setSidebarOpen(false)} />}
+
+      <Sidebar active="settings" isOpen={sidebarOpen} />
 
       <div className={dashboardStyles.mainContainer}>
         <div className={dashboardStyles.topBar}>
-          <div className={dashboardStyles.brandTop}>NeoGate</div>
+          <div className={dashboardStyles.brandRow}>
+            <button
+              className={dashboardStyles.menuButton}
+              type="button"
+              onClick={() => setSidebarOpen((prev) => !prev)}
+              aria-label="Toggle sidebar"
+            >
+              <MenuIcon />
+            </button>
+            <div className={dashboardStyles.brandTop}>NeoGate</div>
+          </div>
 
           <label className={styles.search}>
             <span className={styles.searchIcon}>

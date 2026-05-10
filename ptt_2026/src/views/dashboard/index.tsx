@@ -7,12 +7,12 @@ import styles from './dashboard.module.scss'
 import { listenSystemStatus, listenActivities, updateControlMode } from '@/utils/db/firebaseService'
 import { getSessionUserName, isAuthenticated, logoutUser } from '@/lib/auth'
 
-type Activity = { 
-  id?: string;
-  time: string; 
-  name: string; 
-  status: string; 
-  direction: string 
+type Activity = {
+  id?: string
+  time: string
+  name: string
+  status: string
+  direction: string
 }
 
 type GateStatus = 'terbuka' | 'tertutup'
@@ -20,6 +20,16 @@ type TrainStatus = 'mendekat' | 'lewat' | 'aman'
 type ControlMode = 'otomatis' | 'manual'
 type SensorStatus = 'aktif' | 'nonaktif'
 type TrainDirection = 'kanan' | 'kiri'
+
+function MenuIcon() {
+  return (
+    <svg viewBox='0 0 24 24' aria-hidden='true'>
+      <path d='M4 7h16' />
+      <path d='M4 12h16' />
+      <path d='M4 17h16' />
+    </svg>
+  )
+}
 
 export default function ViewDashboard() {
   const router = useRouter()
@@ -32,6 +42,7 @@ export default function ViewDashboard() {
   const [sensorStatus, setSensorStatus] = useState<SensorStatus>('aktif')
   const [trainDirection, setTrainDirection] = useState<TrainDirection>('kanan')
   const [systemAlert, setSystemAlert] = useState<string | null>(null)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -43,72 +54,81 @@ export default function ViewDashboard() {
     setAuthChecked(true)
   }, [router])
 
-  // 1. Integrasi Listener Real-time Firebase
   useEffect(() => {
     const unsubscribeStatus = listenSystemStatus((data) => {
       if (data) {
-        setGateStatus(data.gateStatus || 'terbuka');
-        setTrainStatus(data.trainStatus || 'aman');
-        setControlMode(data.controlMode || 'otomatis');
-        setSensorStatus(data.sensorStatus || 'aktif');
-        // Logika arah berdasarkan string dari Firebase
-        setTrainDirection(data.direction === 'Malang' ? 'kanan' : 'kiri');
+        setGateStatus(data.gateStatus || 'terbuka')
+        setTrainStatus(data.trainStatus || 'aman')
+        setControlMode(data.controlMode || 'otomatis')
+        setSensorStatus(data.sensorStatus || 'aktif')
+        setTrainDirection(data.direction === 'Malang' ? 'kanan' : 'kiri')
       }
-    });
+    })
 
     const unsubscribeActivities = listenActivities((data) => {
-      setActivities(data);
-    });
+      setActivities(data)
+    })
 
-    // Cleanup untuk mencegah memory leak
     return () => {
-      unsubscribeStatus();
-      unsubscribeActivities();
-    };
+      unsubscribeStatus()
+      unsubscribeActivities()
+    }
   }, [])
 
-  // 2. Logika Alert System
   useEffect(() => {
     if (sensorStatus === 'nonaktif') {
-      setSystemAlert('SISTEM SENSOR MATI');
+      setSystemAlert('SISTEM SENSOR MATI')
     } else if (trainStatus === 'mendekat') {
-      setSystemAlert('KERETA MENDEKAT');
+      setSystemAlert('KERETA MENDEKAT')
     } else {
-      setSystemAlert(null);
+      setSystemAlert(null)
     }
   }, [trainStatus, sensorStatus])
 
-  // 3. Handlers untuk Kontrol Interaktif
   const handleToggleMode = () => {
-    const newMode = controlMode === 'otomatis' ? 'manual' : 'otomatis';
-    updateControlMode(newMode); // Langsung update ke Firebase RTDB
-  };
+    const newMode = controlMode === 'otomatis' ? 'manual' : 'otomatis'
+    updateControlMode(newMode)
+  }
 
   const handleLogout = async () => {
     try {
-      await logoutUser();
-      router.replace('/auth/login');
+      await logoutUser()
+      router.replace('/auth/login')
     } catch (error) {
-      console.error("Logout gagal:", error);
+      console.error('Logout gagal:', error)
     }
   }
-  
+
   const directionLabel = trainDirection === 'kanan' ? 'Malang → Surabaya' : 'Surabaya → Malang'
-  
+
   if (!authChecked) {
     return null
   }
 
   return (
     <div className={styles.page}>
-      <Head><title>Dashboard — NeoGate</title></Head>
-      
-      <Sidebar active="dashboard" />
+      <Head>
+        <title>Dashboard - NeoGate</title>
+      </Head>
+
+      {sidebarOpen && <div className={styles.sidebarBackdrop} onClick={() => setSidebarOpen(false)} />}
+
+      <Sidebar active='dashboard' isOpen={sidebarOpen} />
 
       <div className={styles.mainContainer}>
         <header className={styles.topBar}>
-          <div className={styles.brandTop}>
-            NeoGate <span className={styles.debugBadge}>LIVE</span>
+          <div className={styles.brandRow}>
+            <button
+              className={styles.menuButton}
+              type='button'
+              onClick={() => setSidebarOpen((prev) => !prev)}
+              aria-label='Toggle sidebar'
+            >
+              <MenuIcon />
+            </button>
+            <div className={styles.brandTop}>
+              NeoGate <span className={styles.debugBadge}>LIVE</span>
+            </div>
           </div>
 
           <div className={styles.topActions}>
@@ -119,28 +139,31 @@ export default function ViewDashboard() {
               </div>
               <div className={styles.avatar}>{userName[0]}</div>
             </div>
-            <button className={styles.logoutButton} onClick={handleLogout}>Logout</button>
+            <button className={styles.logoutButton} onClick={handleLogout}>
+              Logout
+            </button>
           </div>
         </header>
 
         <main className={styles.mainContent}>
           <div className={styles.dashboardGrid}>
-            
             <section className={styles.statusPanel}>
               <h2>System Monitor</h2>
-              
+
               {systemAlert && (
-                <div style={{
-                  color: '#ff8e8f', 
-                  backgroundColor: 'rgba(255, 142, 143, 0.1)', 
-                  padding: '10px', 
-                  borderRadius: '5px',
-                  marginBottom: '15px', 
-                  fontWeight: 'bold',
-                  textAlign: 'center',
-                  border: '1px solid #ff8e8f'
-                }}>
-                  ⚠️ {systemAlert}
+                <div
+                  style={{
+                    color: '#ff8e8f',
+                    backgroundColor: 'rgba(255, 142, 143, 0.1)',
+                    padding: '10px',
+                    borderRadius: '5px',
+                    marginBottom: '15px',
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    border: '1px solid #ff8e8f'
+                  }}
+                >
+                  {systemAlert}
                 </div>
               )}
 
@@ -159,16 +182,14 @@ export default function ViewDashboard() {
                 </div>
                 <div className={styles.statusItem}>
                   <span>Mode</span>
-                  <span style={{color: '#66a1ff'}}>{controlMode.toUpperCase()}</span>
+                  <span style={{ color: '#66a1ff' }}>{controlMode.toUpperCase()}</span>
                 </div>
               </div>
 
-              {/* Tombol yang sinkron dengan Firebase Service */}
               <button className={styles.controlButton} onClick={handleToggleMode}>
                 Ubah ke {controlMode === 'otomatis' ? 'Manual' : 'Otomatis'}
               </button>
-              
-              {/* Dummy toggle untuk Sensor Status (bisa ditambah fungsi update di service jika perlu) */}
+
               <button className={styles.controlButton} style={{ opacity: 0.7 }}>
                 {sensorStatus === 'aktif' ? 'Matikan Sensor' : 'Aktifkan Sensor'}
               </button>
@@ -185,7 +206,7 @@ export default function ViewDashboard() {
                     <p className={styles.routeCity}>Malang</p>
                   </div>
 
-                  <div className={styles.routeArrowWrap} aria-hidden="true">
+                  <div className={styles.routeArrowWrap} aria-hidden='true'>
                     <span className={styles.routeArrowLine} />
                     <span className={styles.routeArrowHead} />
                   </div>
@@ -199,19 +220,16 @@ export default function ViewDashboard() {
 
                 <div className={styles.routeHint}>
                   <span className={styles.routeHintIcon}>i</span>
-                  <p>
-                    Ini adalah prediksi keberangkatan dan kedatangan, jadwal bisa saja berubah tergantung kondisi.
-                  </p>
+                  <p>Ini adalah prediksi keberangkatan dan kedatangan, jadwal bisa saja berubah tergantung kondisi.</p>
                 </div>
 
                 <p className={styles.routeDirection}>Arah aktif: {directionLabel}</p>
               </article>
             </section>
-
           </div>
 
           <section>
-            <h2 style={{marginBottom: '20px'}}>Log Aktivitas Terbaru</h2>
+            <h2 style={{ marginBottom: '20px' }}>Log Aktivitas Terbaru</h2>
             <ActivityTable rows={activities} />
           </section>
         </main>
