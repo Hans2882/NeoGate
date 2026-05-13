@@ -9,13 +9,25 @@ type SessionUser = {
   displayName?: string;
   email?: string;
   role?: string;
+  gate?: 'gate1' | 'gate2' | null;
+};
+
+const getGateFromRole = (role?: string | null) => {
+  if (role === 'operator1') return 'gate1';
+  if (role === 'operator2') return 'gate2';
+  return null;
 };
 
 export const loginmanual = (data: any) => {
   if (typeof window !== "undefined") {
+    const normalizedData = {
+      ...data,
+      gate: data?.gate || getGateFromRole(data?.role)
+    };
+
     localStorage.setItem("isLogin", "true");
 
-    localStorage.setItem("user", JSON.stringify(data)); 
+    localStorage.setItem("user", JSON.stringify(normalizedData)); 
     document.cookie = "isLogin=true; path=/";
   }
 };
@@ -46,6 +58,11 @@ export const getSessionUserName = () => {
 export const getSessionUserRole = () => {
   const user = getSessionUser();
   return user?.role || null;
+};
+
+export const getSessionUserGate = () => {
+  const user = getSessionUser();
+  return user?.gate || getGateFromRole(user?.role) || null;
 };
 
 export const logoutUser = async () => {

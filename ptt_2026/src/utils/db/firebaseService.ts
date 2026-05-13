@@ -6,6 +6,12 @@ import { ref, onValue, set, push, serverTimestamp } from "firebase/database";
 
 const usersCollection = collection(db, "users");
 
+const getGateFromRole = (role?: string | null) => {
+  if (role === "operator1") return "gate1";
+  if (role === "operator2") return "gate2";
+  return null;
+};
+
 export const signIn = async (email: string, pass: string) => {
   try {
     // 1. Cari user berdasarkan email
@@ -22,7 +28,7 @@ export const signIn = async (email: string, pass: string) => {
     }
 
     const role = userData.role || "operator";
-    if (role !== "operator" && role !== "admin" && role !== "superadmin") {
+    if (role !== "operator" && role !== "operator1" && role !== "operator2" && role !== "admin" && role !== "superadmin") {
       return { status: false, message: "Role akun tidak valid." };
     }
 
@@ -31,10 +37,11 @@ export const signIn = async (email: string, pass: string) => {
 
     if (isMatch) {
       const userName = userData.name || userData.fullname || userData.fullName || userData.displayName;
+      const gate = getGateFromRole(role);
 
       return {
         status: true,
-        data: { id: userDoc.id, name: userName, email: userData.email, role }
+        data: { id: userDoc.id, name: userName, email: userData.email, role, gate }
       };
     } else {
       return { status: false, message: "Password salah!" };
@@ -44,7 +51,7 @@ export const signIn = async (email: string, pass: string) => {
   }
 };
 
-export const createOperatorByAdmin = async (payload: { name: string; email: string; password: string; createdBy?: string }) => {
+export const createOperatorByAdmin = async (payload: { name: string; email: string; password: string; role?: 'operator1' | 'operator2' | 'operator'; createdBy?: string }) => {
   try {
     const normalizedEmail = payload.email.trim().toLowerCase();
     const q = query(usersCollection, where("email", "==", normalizedEmail));
@@ -79,21 +86,99 @@ export const listenSystemStatus = (callback: (data: any) => void) => {
   });
 };
 
-export const listenActivities = (callback: (data: any[]) => void) => {
-  const activityRef = ref(rtdb, 'activities');
-  return onValue(activityRef, (snapshot) => {
-    const data = snapshot.val();
-    if (data) {
-      // Konversi objek JSON Firebase ke Array agar bisa di-map di table
-      const formatted = Object.keys(data).map(key => ({
-        id: key,
-        ...data[key]
-      })).reverse(); // Data terbaru di atas
-      callback(formatted);
-    } else {
-      callback([]);
-    }
+const formatSessionTime = (sessionId: string) => {
+  const match = sessionId.match(/^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})$/);
+
+  if (!match) {
+    return sessionId;
+  }
+
+  const [, year, month, day, hour, minute, second] = match;
+  const date = new Date(
+    Number(year),
+    Number(month) - 1,
+    Number(day),
+    Number(hour),
+    Number(minute),
+    Number(second)
+  );
+
+  return date.toLocaleString("id-ID", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
   });
+};
+
+const formatBoolean = (value: unknown) => {
+  if (value === true) return "true";
+  if (value === false) return "false";
+  if (value === null || value === undefined) return "-";
+  return String(value);
+};
+
+const buildActivityRows = (gateName: string, gateData: Record<string, any> | null | undefined) => {
+  if (!gateData) {
+    return [];
+  }
+
+  return Object.entries(gateData)
+    .filter(([, sessionValue]) => sessionValue && typeof sessionValue === "object")
+    .map(([sessionId, sessionValue]) => {
+      const session = sessionValue as Record<string, any>;
+      const control = (session.control || {}) as Record<string, any>;
+      const status = (session.status || {}) as Record<string, any>;
+      const systemMonitor = (session.system_monitor || {}) as Record<string, any>;
+      const limits = (session.limits || {}) as Record<string, any>;
+
+      return {
+        id: `${gateName}-${sessionId}`,
+        time: formatSessionTime(sessionId),
+        gate: gateName.toUpperCase(),
+        sessionId,
+        gateState: status.gate_state || "UNKNOWN",
+        keretaLewat: formatBoolean(status.kereta_lewat),
+        bahaya: formatBoolean(systemMonitor.bahaya ?? session.bahaya),
+        control: `servo_pos: ${control.servo_pos ?? "-"}, buzzer: ${formatBoolean(control.buzzer)}`,
+        limits: `close1: ${formatBoolean(limits.close1)}, close2: ${formatBoolean(limits.close2)}, open1: ${formatBoolean(limits.open1)}, open2: ${formatBoolean(limits.open2)}`
+      };
+    })
+    .sort((a, b) => b.sessionId.localeCompare(a.sessionId));
+};
+
+export const listenActivities = (callback: (data: any[]) => void) => {
+  const gate1Ref = ref(rtdb, 'gate1');
+  const gate2Ref = ref(rtdb, 'gate2');
+
+  let gate1Data: Record<string, any> | null = null;
+  let gate2Data: Record<string, any> | null = null;
+
+  const emit = () => {
+    const rows = [
+      ...buildActivityRows('gate1', gate1Data),
+      ...buildActivityRows('gate2', gate2Data)
+    ];
+
+    callback(rows);
+  };
+
+  const unsubscribeGate1 = onValue(gate1Ref, (snapshot) => {
+    gate1Data = snapshot.val();
+    emit();
+  });
+
+  const unsubscribeGate2 = onValue(gate2Ref, (snapshot) => {
+    gate2Data = snapshot.val();
+    emit();
+  });
+
+  return () => {
+    unsubscribeGate1();
+    unsubscribeGate2();
+  };
 };
 
 export const updateControlMode = async (mode: 'otomatis' | 'manual') => {

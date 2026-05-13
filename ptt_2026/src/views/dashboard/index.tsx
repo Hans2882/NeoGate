@@ -5,14 +5,18 @@ import ActivityTable from '@/components/activityTable'
 import Sidebar from '@/components/sidebar'
 import styles from './dashboard.module.scss'
 import { listenSystemStatus, listenActivities, updateControlMode } from '@/utils/db/firebaseService'
-import { getSessionUserName, isAuthenticated, logoutUser } from '@/lib/auth'
+import { getSessionUserGate, getSessionUserName, isAuthenticated, logoutUser } from '@/lib/auth'
 
 type Activity = {
   id?: string
   time: string
-  name: string
-  status: string
-  direction: string
+  gate: string
+  sessionId: string
+  gateState: string
+  keretaLewat: string
+  bahaya: string
+  control: string
+  limits: string
 }
 
 type GateStatus = 'terbuka' | 'tertutup'
@@ -35,6 +39,7 @@ export default function ViewDashboard() {
   const router = useRouter()
   const [activities, setActivities] = useState<Activity[]>([])
   const [userName, setUserName] = useState('')
+  const [userGate, setUserGate] = useState<string | null>(null)
   const [authChecked, setAuthChecked] = useState(false)
   const [gateStatus, setGateStatus] = useState<GateStatus>('terbuka')
   const [trainStatus, setTrainStatus] = useState<TrainStatus>('aman')
@@ -51,6 +56,7 @@ export default function ViewDashboard() {
     }
 
     setUserName(getSessionUserName() || 'Operator')
+    setUserGate(getSessionUserGate())
     setAuthChecked(true)
   }, [router])
 
@@ -99,6 +105,13 @@ export default function ViewDashboard() {
     }
   }
 
+  const visibleActivities = activities.filter((activity) => {
+    if (userGate === 'gate1') return activity.gate === 'GATE1'
+    if (userGate === 'gate2') return activity.gate === 'GATE2'
+    return true
+  })
+
+  const gateLabel = userGate === 'gate1' ? 'Gate 1' : userGate === 'gate2' ? 'Gate 2' : 'Semua Gate'
   const directionLabel = trainDirection === 'kanan' ? 'Malang → Surabaya' : 'Surabaya → Malang'
 
   if (!authChecked) {
@@ -135,7 +148,8 @@ export default function ViewDashboard() {
             <div className={styles.profileCard}>
               <div className={styles.profileInfo}>
                 <span className={styles.profileName}>{userName}</span>
-                <span className={styles.profileRole}>System Operator</span>
+                <span className={styles.profileRole}>Operator</span>
+                <span className={styles.profileGate}>{gateLabel}</span>
               </div>
               <div className={styles.avatar}>{userName[0]}</div>
             </div>
@@ -236,8 +250,8 @@ export default function ViewDashboard() {
           </div>
 
           <section>
-            <h2 style={{ marginBottom: '20px' }}>Log Aktivitas Terbaru</h2>
-            <ActivityTable rows={activities} />
+            <h2 style={{ marginBottom: '20px' }}>Log Aktivitas Terbaru - {gateLabel}</h2>
+            <ActivityTable rows={visibleActivities} />
           </section>
         </main>
       </div>
