@@ -55,6 +55,7 @@ export default function SettingsPage() {
   const [newOperatorName, setNewOperatorName] = useState('')
   const [newOperatorEmail, setNewOperatorEmail] = useState('')
   const [newOperatorPassword, setNewOperatorPassword] = useState('')
+  const [newOperatorGate, setNewOperatorGate] = useState<'gate1' | 'gate2'>('gate1')
   const [createOperatorLoading, setCreateOperatorLoading] = useState(false)
   const [createOperatorMessage, setCreateOperatorMessage] = useState('')
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -96,6 +97,7 @@ export default function SettingsPage() {
       name: newOperatorName,
       email: newOperatorEmail,
       password: newOperatorPassword,
+      gate: newOperatorGate,
       createdBy: sessionUser?.email || userName
     })
 
@@ -104,6 +106,7 @@ export default function SettingsPage() {
       setNewOperatorName('')
       setNewOperatorEmail('')
       setNewOperatorPassword('')
+      setNewOperatorGate('gate1')
     } else {
       setCreateOperatorMessage(String(result.message || 'Gagal menambah operator.'))
     }
@@ -325,6 +328,18 @@ export default function SettingsPage() {
                     onChange={(event) => setNewOperatorPassword(event.target.value)}
                     required
                   />
+                </label>
+
+                <label className={styles.fieldLabel}>
+                  Pilihan Gate
+                  <select
+                    className={styles.select}
+                    value={newOperatorGate}
+                    onChange={(event) => setNewOperatorGate(event.target.value as 'gate1' | 'gate2')}
+                  >
+                    <option value="gate1">Gate 1</option>
+                    <option value="gate2">Gate 2</option>
+                  </select>
                 </label>
 
                 <div className={styles.actions}>

@@ -12,6 +12,12 @@ const getGateFromRole = (role?: string | null) => {
   return null;
 };
 
+const getRoleFromGate = (gate?: string | null) => {
+  if (gate === "gate1") return "operator1";
+  if (gate === "gate2") return "operator2";
+  return "operator";
+};
+
 export const signIn = async (email: string, pass: string) => {
   try {
     // 1. Cari user berdasarkan email
@@ -37,7 +43,7 @@ export const signIn = async (email: string, pass: string) => {
 
     if (isMatch) {
       const userName = userData.name || userData.fullname || userData.fullName || userData.displayName;
-      const gate = getGateFromRole(role);
+      const gate = userData.gate || getGateFromRole(role);
 
       return {
         status: true,
@@ -51,7 +57,14 @@ export const signIn = async (email: string, pass: string) => {
   }
 };
 
-export const createOperatorByAdmin = async (payload: { name: string; email: string; password: string; role?: 'operator1' | 'operator2' | 'operator'; createdBy?: string }) => {
+export const createOperatorByAdmin = async (payload: {
+  name: string;
+  email: string;
+  password: string;
+  gate: 'gate1' | 'gate2';
+  role?: 'operator1' | 'operator2' | 'operator';
+  createdBy?: string;
+}) => {
   try {
     const normalizedEmail = payload.email.trim().toLowerCase();
     const q = query(usersCollection, where("email", "==", normalizedEmail));
@@ -61,12 +74,16 @@ export const createOperatorByAdmin = async (payload: { name: string; email: stri
       return { status: false, message: "Email sudah terdaftar." };
     }
 
+    const assignedGate = payload.gate;
+    const assignedRole = payload.role || getRoleFromGate(assignedGate);
+
     const hashedPassword = bcrypt.hashSync(payload.password, bcrypt.genSaltSync(10));
     const docRef = await addDoc(usersCollection, {
       name: payload.name.trim(),
       email: normalizedEmail,
       password: hashedPassword,
-      role: "operator",
+      role: assignedRole,
+      gate: assignedGate,
       isActive: true,
       createdAt: new Date().toISOString(),
       createdBy: payload.createdBy || "admin"
@@ -120,13 +137,30 @@ const formatBoolean = (value: unknown) => {
   return String(value);
 };
 
+const isSessionLike = (value: unknown) => {
+  if (!value || typeof value !== "object") return false;
+
+  const candidate = value as Record<string, any>;
+  return (
+    Object.prototype.hasOwnProperty.call(candidate, "control") ||
+    Object.prototype.hasOwnProperty.call(candidate, "status") ||
+    Object.prototype.hasOwnProperty.call(candidate, "limits") ||
+    Object.prototype.hasOwnProperty.call(candidate, "system_monitor")
+  );
+};
+
 const buildActivityRows = (gateName: string, gateData: Record<string, any> | null | undefined) => {
   if (!gateData) {
     return [];
   }
 
-  return Object.entries(gateData)
-    .filter(([, sessionValue]) => sessionValue && typeof sessionValue === "object")
+  const entries = isSessionLike(gateData)
+    ? [["live", gateData] as [string, Record<string, any>]]
+    : Object.entries(gateData).filter(([, sessionValue]) => isSessionLike(sessionValue)) as Array<
+        [string, Record<string, any>]
+      >;
+
+  return entries
     .map(([sessionId, sessionValue]) => {
       const session = sessionValue as Record<string, any>;
       const control = (session.control || {}) as Record<string, any>;
@@ -149,7 +183,26 @@ const buildActivityRows = (gateName: string, gateData: Record<string, any> | nul
     .sort((a, b) => b.sessionId.localeCompare(a.sessionId));
 };
 
-export const listenActivities = (callback: (data: any[]) => void) => {
+export const listenActivities = (
+  callback: (data: any[]) => void,
+  gateFilter?: 'gate1' | 'gate2' | null,
+  onError?: (message: string) => void
+) => {
+  if (gateFilter === 'gate1' || gateFilter === 'gate2') {
+    const gateRef = ref(rtdb, gateFilter);
+    const unsubscribeGate = onValue(gateRef, (snapshot) => {
+      const gateData = snapshot.val();
+      callback(buildActivityRows(gateFilter, gateData));
+    }, (error) => {
+      onError?.(error.message || 'Gagal membaca data aktivitas dari Realtime Database.');
+      callback([]);
+    });
+
+    return () => {
+      unsubscribeGate();
+    };
+  }
+
   const gate1Ref = ref(rtdb, 'gate1');
   const gate2Ref = ref(rtdb, 'gate2');
 
@@ -168,11 +221,15 @@ export const listenActivities = (callback: (data: any[]) => void) => {
   const unsubscribeGate1 = onValue(gate1Ref, (snapshot) => {
     gate1Data = snapshot.val();
     emit();
+  }, (error) => {
+    onError?.(error.message || 'Gagal membaca data gate1 dari Realtime Database.');
   });
 
   const unsubscribeGate2 = onValue(gate2Ref, (snapshot) => {
     gate2Data = snapshot.val();
     emit();
+  }, (error) => {
+    onError?.(error.message || 'Gagal membaca data gate2 dari Realtime Database.');
   });
 
   return () => {

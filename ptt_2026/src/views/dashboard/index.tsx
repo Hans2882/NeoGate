@@ -47,6 +47,7 @@ export default function ViewDashboard() {
   const [sensorStatus, setSensorStatus] = useState<SensorStatus>('aktif')
   const [trainDirection, setTrainDirection] = useState<TrainDirection>('kanan')
   const [systemAlert, setSystemAlert] = useState<string | null>(null)
+  const [activitiesError, setActivitiesError] = useState<string | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useEffect(() => {
@@ -61,6 +62,10 @@ export default function ViewDashboard() {
   }, [router])
 
   useEffect(() => {
+    if (!authChecked) {
+      return
+    }
+
     const unsubscribeStatus = listenSystemStatus((data) => {
       if (data) {
         setGateStatus(data.gateStatus || 'terbuka')
@@ -71,15 +76,24 @@ export default function ViewDashboard() {
       }
     })
 
-    const unsubscribeActivities = listenActivities((data) => {
-      setActivities(data)
-    })
+    const normalizedGateFilter = userGate === 'gate1' || userGate === 'gate2' ? userGate : null
+    const unsubscribeActivities = listenActivities(
+      (data) => {
+        setActivitiesError(null)
+        setActivities(data)
+      },
+      normalizedGateFilter,
+      (errorMessage) => {
+        setActivities([])
+        setActivitiesError(errorMessage)
+      }
+    )
 
     return () => {
       unsubscribeStatus()
       unsubscribeActivities()
     }
-  }, [])
+  }, [authChecked, userGate])
 
   useEffect(() => {
     if (sensorStatus === 'nonaktif') {
@@ -251,6 +265,11 @@ export default function ViewDashboard() {
 
           <section>
             <h2 style={{ marginBottom: '20px' }}>Log Aktivitas Terbaru - {gateLabel}</h2>
+            {activitiesError && (
+              <p style={{ marginBottom: '12px', color: '#ff8e8f' }}>
+                Gagal memuat log aktivitas: {activitiesError}
+              </p>
+            )}
             <ActivityTable rows={visibleActivities} />
           </section>
         </main>

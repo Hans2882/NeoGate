@@ -26,6 +26,7 @@ export default function AdminOperatorsPage() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [gate, setGate] = useState<'gate1' | 'gate2'>('gate1')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [message, setMessage] = useState('')
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -72,6 +73,7 @@ export default function AdminOperatorsPage() {
       name,
       email,
       password,
+      gate,
       createdBy: sessionUser?.email || userName
     })
 
@@ -80,6 +82,7 @@ export default function AdminOperatorsPage() {
       setName('')
       setEmail('')
       setPassword('')
+      setGate('gate1')
     } else {
       setMessage(String(result.message || 'Gagal menambah operator.'))
     }
@@ -174,6 +177,14 @@ export default function AdminOperatorsPage() {
                     placeholder='Minimal 6 karakter'
                     required
                   />
+                </label>
+
+                <label className={styles.fieldLabel}>
+                  Pilihan Gate
+                  <select className={styles.select} value={gate} onChange={(event) => setGate(event.target.value as 'gate1' | 'gate2')}>
+                    <option value='gate1'>Gate 1</option>
+                    <option value='gate2'>Gate 2</option>
+                  </select>
                 </label>
 
                 <div className={styles.actions}>
