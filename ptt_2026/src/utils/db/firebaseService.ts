@@ -24,7 +24,7 @@ export const signIn = async (email: string, pass: string) => {
     const userData = userDoc.data();
 
     if (userData.isActive === false) {
-      return { status: false, message: "Akun nonaktif. Hubungi superadmin."};
+      return { status: false, message: "Akun nonaktif. Hubungi superadmin." };
     }
 
     const role = userData.role || "operator";
@@ -129,21 +129,30 @@ const buildActivityRows = (gateName: string, gateData: Record<string, any> | nul
     .filter(([, sessionValue]) => sessionValue && typeof sessionValue === "object")
     .map(([sessionId, sessionValue]) => {
       const session = sessionValue as Record<string, any>;
-      const control = (session.control || {}) as Record<string, any>;
       const status = (session.status || {}) as Record<string, any>;
       const systemMonitor = (session.system_monitor || {}) as Record<string, any>;
-      const limits = (session.limits || {}) as Record<string, any>;
 
       return {
         id: `${gateName}-${sessionId}`,
         time: formatSessionTime(sessionId),
         gate: gateName.toUpperCase(),
         sessionId,
-        gateState: status.gate_state || "UNKNOWN",
-        keretaLewat: formatBoolean(status.kereta_lewat),
-        bahaya: formatBoolean(systemMonitor.bahaya ?? session.bahaya),
-        control: `servo_pos: ${control.servo_pos ?? "-"}, buzzer: ${formatBoolean(control.buzzer)}`,
-        limits: `close1: ${formatBoolean(limits.close1)}, close2: ${formatBoolean(limits.close2)}, open1: ${formatBoolean(limits.open1)}, open2: ${formatBoolean(limits.open2)}`
+
+        name: session.train_name || session.train_id || sessionId,
+
+        status:
+          status?.gate_state?.toUpperCase() === "OPEN"
+            ? "TERBUKA"
+            : status?.gate_state?.toUpperCase() === "CLOSED"
+              ? "TERTUTUP"
+              : "UNKNOWN",
+
+        direction:
+          session.direction ||
+          systemMonitor.direction ||
+          "-",
+
+        icon: session.icon
       };
     })
     .sort((a, b) => b.sessionId.localeCompare(a.sessionId));
@@ -155,6 +164,7 @@ export const listenActivities = (callback: (data: any[]) => void) => {
 
   let gate1Data: Record<string, any> | null = null;
   let gate2Data: Record<string, any> | null = null;
+
 
   const emit = () => {
     const rows = [

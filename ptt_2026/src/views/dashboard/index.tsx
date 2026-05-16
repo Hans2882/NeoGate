@@ -12,11 +12,10 @@ type Activity = {
   time: string
   gate: string
   sessionId: string
-  gateState: string
-  keretaLewat: string
-  bahaya: string
-  control: string
-  limits: string
+  name: string
+  status: string
+  direction: string
+  icon?: 'train' | 'cargo'
 }
 
 type GateStatus = 'terbuka' | 'tertutup'
