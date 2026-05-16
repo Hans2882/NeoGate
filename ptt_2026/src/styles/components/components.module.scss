@@ -717,6 +717,10 @@
   width: 1%;
 }
 
+.activityRowDimmed {
+  opacity: 0.1;
+}
+
 .actionButton {
   width: 42px;
   height: 42px;
@@ -728,6 +732,12 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: opacity 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.actionButton:hover {
+  background: rgba(87, 100, 136, 0.8);
+  transform: translateY(-1px);
 }
 
 .actionButton svg {

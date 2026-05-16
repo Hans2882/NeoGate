@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import styles from '@/styles/components/components.module.scss'
 
 interface Row {
@@ -38,6 +39,8 @@ function EyeIcon() {
 }
 
 export default function ActivityTable({ rows }: { rows: Row[] }) {
+  const [dimmedRowIndex, setDimmedRowIndex] = useState<number | null>(null)
+
   return (
     <table className={styles.table}>
       <thead>
@@ -51,7 +54,7 @@ export default function ActivityTable({ rows }: { rows: Row[] }) {
       </thead>
       <tbody>
         {rows.map((r, i) => (
-          <tr key={i}>
+          <tr key={i} className={dimmedRowIndex === i ? styles.activityRowDimmed : ''}>
             <td>{r.time}</td>
             <td>
               <div className={styles.trainCell}>
@@ -73,7 +76,12 @@ export default function ActivityTable({ rows }: { rows: Row[] }) {
             </td>
             <td>{r.direction}</td>
             <td className={styles.actionCell}>
-              <button className={styles.actionButton} type="button" aria-label={`View ${r.name}`}>
+              <button
+                className={styles.actionButton}
+                type="button"
+                aria-label={`Dim row for ${r.name}`}
+                onClick={() => setDimmedRowIndex((current) => (current === i ? null : i))}
+              >
                 <EyeIcon />
               </button>
             </td>
