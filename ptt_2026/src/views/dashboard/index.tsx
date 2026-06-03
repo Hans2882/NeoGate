@@ -24,6 +24,25 @@ type ControlMode = 'otomatis' | 'manual'
 type SensorStatus = 'aktif' | 'nonaktif'
 type TrainDirection = 'kanan' | 'kiri'
 
+const getSessionDateKey = (sessionId: string) => {
+  const match = sessionId.match(/^(\d{4})(\d{2})(\d{2})-/)
+
+  if (!match) {
+    return null
+  }
+
+  return `${match[1]}${match[2]}${match[3]}`
+}
+
+const getTodayKey = () => {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+
+  return `${year}${month}${day}`
+}
+
 function MenuIcon() {
   return (
     <svg viewBox='0 0 24 24' aria-hidden='true'>
@@ -135,7 +154,16 @@ export default function ViewDashboard() {
   })
 
   const gateLabel = normalizedUserGate === 'gate1' ? 'Gate 1' : normalizedUserGate === 'gate2' ? 'Gate 2' : 'Semua Gate'
-  const directionLabel = trainDirection === 'kanan' ? 'Malang → Surabaya' : 'Surabaya → Malang'
+  const todayKey = getTodayKey()
+  const todayActivities = visibleActivities.filter((activity) => getSessionDateKey(activity.sessionId) === todayKey)
+  const recentActivities = todayActivities.length > 0 ? todayActivities : visibleActivities
+  const statsPeriodLabel = todayActivities.length > 0 ? 'Hari ini' : 'Log terbaru'
+  const totalLogs = recentActivities.length
+  const openLogs = recentActivities.filter((activity) => activity.status === 'TERBUKA').length
+  const closedLogs = recentActivities.filter((activity) => activity.status === 'TERTUTUP').length
+  const latestActivity = recentActivities[0]
+  const latestDirectionLabel = latestActivity?.direction || '-'
+  const latestStatusLabel = latestActivity?.status || '-'
 
   if (!authChecked) {
     return null
@@ -234,40 +262,46 @@ export default function ViewDashboard() {
             </section>
 
             <section className={styles.visualPanel}>
-              <article className={styles.routeCard}>
-                <h3 className={styles.routeTitle}>Rute</h3>
+              <article className={styles.statsCard}>
+                <div className={styles.statsHeader}>
+                  <div>
+                    <p className={styles.statsEyebrow}>{statsPeriodLabel}</p>
+                    <h3 className={styles.statsTitle}>Statistik Log Aktivitas</h3>
+                  </div>
+                  <span className={styles.statsBadge}>{gateLabel}</span>
+                </div>
 
-                <div className={styles.routeBody}>
-                  <div className={styles.routeSide}>
-                    <p className={styles.routeTime}>11.00</p>
-                    <p className={styles.routeCode}>MLG</p>
-                    <p className={styles.routeCity}>Malang</p>
+                <div className={styles.statsGrid}>
+                  <div className={styles.statBlock}>
+                    <span className={styles.statLabel}>Total Log</span>
+                    <strong className={styles.statValue}>{totalLogs}</strong>
+                    <p className={styles.statMeta}>Diambil langsung dari log aktivitas gate.</p>
                   </div>
 
-                  <div className={styles.routeArrowWrap} aria-hidden='true'>
-                    <span className={styles.routeArrowLine} />
-                    <span className={styles.routeArrowHead} />
+                  <div className={styles.statBlock}>
+                    <span className={styles.statLabel}>Log Terbuka</span>
+                    <strong className={`${styles.statValue} ${styles.stateSafe}`}>{openLogs}</strong>
+                    <p className={styles.statMeta}>Status TERBUKA pada data yang tampil.</p>
                   </div>
 
-                  <div className={styles.routeSide}>
-                    <p className={styles.routeTime}>12.30</p>
-                    <p className={styles.routeCode}>SBY</p>
-                    <p className={styles.routeCity}>Surabaya</p>
+                  <div className={styles.statBlock}>
+                    <span className={styles.statLabel}>Log Tertutup</span>
+                    <strong className={`${styles.statValue} ${styles.stateDanger}`}>{closedLogs}</strong>
+                    <p className={styles.statMeta}>Status TERTUTUP pada data yang tampil.</p>
                   </div>
                 </div>
 
-                <div className={styles.routeHint}>
-                  <div className={styles.routeHintContent}>
-                    <span className={styles.routeHintIcon}>i</span>
-                    <div className={styles.routeHintText}>
-                      <p>
-                        Ini adalah prediksi keberangkatan dan kedatangan, jadwal bisa saja berubah tergantung kondisi.
-                      </p>
-                    </div>
+                <div className={styles.statsFooter}>
+                  <div className={styles.statsFooterItem}>
+                    <span className={styles.statLabel}>Log Terakhir</span>
+                    <strong className={styles.statValue}>{latestActivity ? latestActivity.name : 'Belum ada data'}</strong>
+                    <p className={styles.statMeta}>
+                      {latestActivity
+                        ? `${latestActivity.time} • ${latestStatusLabel} • ${latestDirectionLabel}`
+                        : 'Menunggu data aktivitas masuk.'}
+                    </p>
                   </div>
                 </div>
-
-                <p className={styles.routeDirection}>Arah aktif: {directionLabel}</p>
               </article>
             </section>
           </div>

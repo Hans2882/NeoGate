@@ -183,132 +183,107 @@
   overflow: hidden;
 }
 
-.routeCard {
+.statsCard {
   width: 100%;
-  max-width: 760px;
-  padding: 5px 10px 5px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 18px;
 }
 
-.routeTitle {
-  font-size: 25px;
-  font-weight: 700;
-  line-height: 1.1;
-
-  color: #f1f5ff;
-  top: -30px;
-  right: -600px;
-}
-
-.routeBody {
-  display: grid;
-  grid-template-columns: 1fr 220px 1fr;
-  align-items: center;
-  gap: 10px;
-
-  width: fit-content;
-  margin-left: auto;
-  margin-right: auto;
-
-  position: relative;
-  top: 15px;
-  left: 75px; /* hapus/ubah offset manual */
-}
-
-.routeSide {
-  text-align: center;
-}
-
-.routeTime {
-  font-size: 42px;
-  font-weight: 800;
-  color: #f7fbff;
-}
-
-.routeCode {
-  margin-top: 8px;
-  font-size: 64px;
-  line-height: 0.95;
-  font-weight: 900;
-  color: #e9f1ff;
-  letter-spacing: 0.01em;
-}
-
-.routeCity {
-  margin-top: 12px;
-  font-size: 42px;
-  color: #c8d8ff;
-}
-
-.routeArrowWrap {
-  position: relative;
-  left: 20;
-  width: 220px;
-  height: 32px;
-  margin: 0 auto;
-}
-
-.routeArrowLine {
-  position: absolute;
-  left: 0;
-  right: 28px;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 7px;
-  border-radius: 999px;
-  background: #eef4ff;
-}
-
-.routeArrowHead {
-  position: absolute;
-  right: 30;
-  top: 50%;
-  width: 20px;
-  height: 20px;
-  border-top: 7px solid #eef4ff;
-  border-right: 7px solid #eef4ff;
-  transform: translateY(-50%) rotate(45deg);
-}
-
-.routeHint {
-  margin-top: 26px;
-}
-
-.routeHintContent {
-  display: grid;
-  grid-template-columns: 32px 1fr;
+.statsHeader {
+  display: flex;
   align-items: start;
-  gap: 12px;
-  transform: scale(0.7);
-  position: relative;
-  top: 10px;
-  left: -110px;
+  justify-content: space-between;
+  gap: 16px;
 }
 
-.routeHintIcon {
-  position: relative;
-  width: 30px;
-  height: 30px;
-  border-radius: 999px;
-  border: 2px solid rgba(213, 227, 255, 0.82);
-  color: #d5e3ff;
+.statsEyebrow {
+  margin-bottom: 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #6f87b9;
+}
+
+.statsTitle {
+  font-size: 30px;
+  font-weight: 800;
+  color: #f1f5ff;
+  line-height: 1.05;
+}
+
+.statsBadge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  font-weight: 700; 
-  top: 12px;
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: rgba(72, 110, 199, 0.16);
+  border: 1px solid rgba(123, 149, 217, 0.2);
+  color: #9bbaff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.routeHint p {
-  font-size: 20px;
-  line-height: 1.35;
-  color: #cad8f8;
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 }
 
-.routeDirection {
-  margin-top: 16px;
-  font-size: 15px;
-  color: #90a9de;
+.statsGrid > :first-child {
+  grid-column: 1 / -1;
+}
+
+.statBlock,
+.statsFooterItem {
+  padding: 18px 18px 16px;
+  border-radius: 16px;
+  background: rgba(10, 15, 28, 0.44);
+  border: 1px solid rgba(123, 149, 217, 0.1);
+}
+
+.statLabel {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #7f93c5;
+}
+
+.statValue {
+  display: block;
+  font-size: 22px;
+  font-weight: 800;
+  color: #f4f7ff;
+  line-height: 1.1;
+}
+
+.statMeta {
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #9caed5;
+}
+
+.statsFooter {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.statsFooterItem {
+  background: linear-gradient(180deg, rgba(15, 24, 42, 0.72), rgba(10, 15, 28, 0.44));
+}
+
+.statsFooterItem {
+  min-height: 96px;
 }
 
 .statusPillsWrap {
