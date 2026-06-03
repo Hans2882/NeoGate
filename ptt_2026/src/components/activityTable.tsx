@@ -49,7 +49,6 @@ export default function ActivityTable({ rows }: { rows: Row[] }) {
           <th>Train Name/ID</th>
           <th>Gate Status</th>
           <th>Direction</th>
-          <th>Action</th>
         </tr>
       </thead>
       <tbody>
@@ -75,16 +74,6 @@ export default function ActivityTable({ rows }: { rows: Row[] }) {
               </span>
             </td>
             <td>{r.direction}</td>
-            <td className={styles.actionCell}>
-              <button
-                className={styles.actionButton}
-                type="button"
-                aria-label={`Dim row for ${r.name}`}
-                onClick={() => setDimmedRowIndex((current) => (current === i ? null : i))}
-              >
-                <EyeIcon />
-              </button>
-            </td>
           </tr>
         ))}
       </tbody>
