@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styles from '@/styles/components/components.module.scss'
 
 interface Row {
@@ -40,43 +40,77 @@ function EyeIcon() {
 
 export default function ActivityTable({ rows }: { rows: Row[] }) {
   const [dimmedRowIndex, setDimmedRowIndex] = useState<number | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 20
+  const totalPages = Math.max(1, Math.ceil(rows.length / pageSize))
+
+  useEffect(() => {
+    setCurrentPage((page) => Math.min(page, totalPages))
+  }, [totalPages])
+
+  const startIndex = (currentPage - 1) * pageSize
+  const pagedRows = rows.slice(startIndex, startIndex + pageSize)
 
   return (
-    <table className={styles.table}>
-      <thead>
-        <tr>
-          <th>Time</th>
-          <th>Train Name/ID</th>
-          <th>Gate Status</th>
-          <th>Direction</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((r, i) => (
-          <tr key={i} className={dimmedRowIndex === i ? styles.activityRowDimmed : ''}>
-            <td>{r.time}</td>
-            <td>
-              <div className={styles.trainCell}>
-                <span
-                  className={`${styles.trainIcon} ${
-                    (r.icon ?? (r.name === 'PENATARAN' ? 'cargo' : 'train')) === 'cargo' ? styles.trainIconAmber : ''
-                  }`}
-                >
-                  <VehicleIcon type={r.icon ?? (r.name === 'PENATARAN' ? 'cargo' : 'train')} />
-                </span>
-                <strong>{r.name}</strong>
-              </div>
-            </td>
-            <td>
-              <span className={`${styles.statusPill} ${r.status === 'UNPASSED' ? styles.statusPillAlert : ''}`}>
-                <span className={styles.statusIndicator} />
-                {r.status}
-              </span>
-            </td>
-            <td>{r.direction}</td>
+    <div className={styles.tableWrapper}>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Train Name/ID</th>
+            <th>Gate Status</th>
+            <th>Direction</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {pagedRows.map((r, i) => (
+            <tr key={i} className={dimmedRowIndex === i ? styles.activityRowDimmed : ''}>
+              <td>{r.time}</td>
+              <td>
+                <div className={styles.trainCell}>
+                  <span
+                    className={`${styles.trainIcon} ${
+                      (r.icon ?? (r.name === 'PENATARAN' ? 'cargo' : 'train')) === 'cargo' ? styles.trainIconAmber : ''
+                    }`}
+                  >
+                    <VehicleIcon type={r.icon ?? (r.name === 'PENATARAN' ? 'cargo' : 'train')} />
+                  </span>
+                  <strong>{r.name}</strong>
+                </div>
+              </td>
+              <td>
+                <span className={`${styles.statusPill} ${r.status === 'UNPASSED' ? styles.statusPillAlert : ''}`}>
+                  <span className={styles.statusIndicator} />
+                  {r.status}
+                </span>
+              </td>
+              <td>{r.direction}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <div className={styles.tablePagination}>
+        <button
+          className={styles.pageButton}
+          type='button'
+          onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <span className={styles.pageInfo}>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          className={styles.pageButton}
+          type='button'
+          onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
+      </div>
+    </div>
   )
 }
