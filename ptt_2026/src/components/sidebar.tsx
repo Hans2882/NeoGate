@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import styles from '@/styles/components/components.module.scss'
 import { getSessionUserRole } from '@/lib/auth'
 
 interface SidebarProps {
-  active?: 'dashboard' | 'settings' | 'admin'
+  active?: 'dashboard' | 'admin'
   isOpen?: boolean
 }
 
@@ -15,15 +16,6 @@ function GridIcon() {
       <rect x="14" y="4" width="6" height="6" rx="1" />
       <rect x="4" y="14" width="6" height="6" rx="1" />
       <rect x="14" y="14" width="6" height="6" rx="1" />
-    </svg>
-  )
-}
-
-function GearIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 3.5 13.4 5l2-.3.9 1.7 1.9.5.1 2 1.4 1.3-1 1.8 1 1.8-1.4 1.3-.1 2-1.9.5-.9 1.7-2-.3L12 20.5l-1.4-1.4-2 .3-.9-1.7-1.9-.5-.1-2-1.4-1.3 1-1.8-1-1.8 1.4-1.3.1-2 1.9-.5.9-1.7 2 .3L12 3.5Z" />
-      <circle cx="12" cy="12" r="3.2" />
     </svg>
   )
 }
@@ -63,25 +55,19 @@ export default function Sidebar({ active = 'dashboard', isOpen = false }: Sideba
       </div>
 
       <nav className={styles.nav}>
-        <a className={`${styles.navItem} ${active === 'dashboard' ? styles.navItemActive : ''}`} href="/dashboard">
+        <Link className={`${styles.navItem} ${active === 'dashboard' ? styles.navItemActive : ''}`} href="/dashboard">
           <span className={styles.navIcon}>
             <GridIcon />
           </span>
           Dashboard
-        </a>
-        <a className={`${styles.navItem} ${active === 'settings' ? styles.navItemActive : ''}`} href="/settings">
-          <span className={styles.navIcon}>
-            <GearIcon />
-          </span>
-          Settings
-        </a>
+        </Link>
         {showAdminMenu && (
-          <a className={`${styles.navItem} ${active === 'admin' ? styles.navItemActive : ''}`} href="/admin/operators">
+          <Link className={`${styles.navItem} ${active === 'admin' ? styles.navItemActive : ''}`} href="/admin/operators">
             <span className={styles.navIcon}>
               <UserPlusIcon />
             </span>
             Admin Operator
-          </a>
+          </Link>
         )}
         
       </nav>

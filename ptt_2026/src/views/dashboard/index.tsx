@@ -106,6 +106,14 @@ export default function ViewDashboard() {
 
   const handleToggleMode = () => {
     const newMode = controlMode === 'otomatis' ? 'manual' : 'otomatis'
+    const confirmMessage =
+      newMode === 'manual'
+        ? 'Yakin ingin mengubah mode ke Manual?'
+        : 'Yakin ingin mengubah mode ke Otomatis?'
+
+    if (!window.confirm(confirmMessage)) {
+      return
+    }
     updateControlMode(newMode)
   }
 
