@@ -5,7 +5,7 @@ import ActivityTable from '@/components/activityTable'
 import Sidebar from '@/components/sidebar'
 import styles from './dashboard.module.scss'
 import { listenSystemStatus, listenActivities, updateControlMode } from '@/utils/db/firebaseService'
-import { getSessionUserGate, getSessionUserName, isAuthenticated, logoutUser } from '@/lib/auth'
+import { getSessionUserGate, getSessionUserName, isAuthenticated, logoutUser, normalizeGate } from '@/lib/auth'
 
 type Activity = {
   id?: string
@@ -75,7 +75,7 @@ export default function ViewDashboard() {
       }
     })
 
-    const normalizedGateFilter = userGate === 'gate1' || userGate === 'gate2' ? userGate : null
+    const normalizedGateFilter = normalizeGate(userGate)
     const unsubscribeActivities = listenActivities(
       (data) => {
         setActivitiesError(null)
@@ -126,13 +126,15 @@ export default function ViewDashboard() {
     }
   }
 
+  const normalizedUserGate = normalizeGate(userGate)
+
   const visibleActivities = activities.filter((activity) => {
-    if (userGate === 'gate1') return activity.gate === 'GATE1'
-    if (userGate === 'gate2') return activity.gate === 'GATE2'
+    if (normalizedUserGate === 'gate1') return normalizeGate(activity.gate) === 'gate1'
+    if (normalizedUserGate === 'gate2') return normalizeGate(activity.gate) === 'gate2'
     return true
   })
 
-  const gateLabel = userGate === 'gate1' ? 'Gate 1' : userGate === 'gate2' ? 'Gate 2' : 'Semua Gate'
+  const gateLabel = normalizedUserGate === 'gate1' ? 'Gate 1' : normalizedUserGate === 'gate2' ? 'Gate 2' : 'Semua Gate'
   const directionLabel = trainDirection === 'kanan' ? 'Malang → Surabaya' : 'Surabaya → Malang'
 
   if (!authChecked) {

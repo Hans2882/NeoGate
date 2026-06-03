@@ -12,6 +12,16 @@ type SessionUser = {
   gate?: 'gate1' | 'gate2' | null;
 };
 
+export const normalizeGate = (gate?: string | null) => {
+  if (!gate) return null;
+
+  const normalized = gate.toLowerCase().replace(/\s+/g, '');
+  if (normalized === 'gate1') return 'gate1';
+  if (normalized === 'gate2') return 'gate2';
+
+  return null;
+};
+
 const getGateFromRole = (role?: string | null) => {
   if (role === 'operator1') return 'gate1';
   if (role === 'operator2') return 'gate2';
@@ -22,7 +32,7 @@ export const loginmanual = (data: any) => {
   if (typeof window !== "undefined") {
     const normalizedData = {
       ...data,
-      gate: data?.gate || getGateFromRole(data?.role)
+      gate: normalizeGate(data?.gate) || getGateFromRole(data?.role)
     };
 
     localStorage.setItem("isLogin", "true");
@@ -62,7 +72,7 @@ export const getSessionUserRole = () => {
 
 export const getSessionUserGate = () => {
   const user = getSessionUser();
-  return user?.gate || getGateFromRole(user?.role) || null;
+  return normalizeGate(user?.gate) || getGateFromRole(user?.role) || null;
 };
 
 export const logoutUser = async () => {
