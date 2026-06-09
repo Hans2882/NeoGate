@@ -224,36 +224,68 @@ export default function Home() {
               </div>
             </section>
 
-            <section id="fitur" className={styles.section}>
+            <section id="fitur" className={`${styles.section} ${styles.dashboardSection}`}>
               <div className={styles.container}>
-                <h2>Fitur Utama</h2>
-                <div className={styles.features}>
-                  <div
-                    className={`${styles.featureCard} ${styles.glowHover} ${styles.reveal}`}
-                  >
+                <div className={styles.dashboardSectionHeader}>
+                  <div>
+                    <p className={styles.dashboardEyebrow}>Control Overview</p>
+                    <h2>Fitur Utama</h2>
+                    <p className={styles.sectionDesc}>
+                      Susunan fitur ini mengikuti bahasa visual dashboard supaya
+                      landing page terasa satu keluarga dengan halaman operasional.
+                    </p>
+                  </div>
+                  <span className={styles.dashboardBadge}>Live System</span>
+                </div>
+
+                <div className={styles.dashboardFeatureGrid}>
+                  <article className={`${styles.dashboardFeatureCard} ${styles.reveal}`}>
+                    <div className={styles.featureCardTop}>
+                      <span className={styles.featureIndex}>01</span>
+                      <span className={styles.featureTag}>Monitoring</span>
+                    </div>
                     <h3>Monitoring Real-Time</h3>
                     <p>
                       Memantau kondisi perangkat dan status palang secara
-                      langsung.
+                      langsung dari satu panel pusat.
                     </p>
-                  </div>
-                  <div className={styles.featureCard}>
+                  </article>
+
+                  <article className={`${styles.dashboardFeatureCard} ${styles.reveal}`}>
+                    <div className={styles.featureCardTop}>
+                      <span className={styles.featureIndex}>02</span>
+                      <span className={styles.featureTag}>Automation</span>
+                    </div>
                     <h3>Kontrol Otomatis</h3>
-                    <p>Pengoperasian palang berdasarkan data sensor.</p>
-                  </div>
-                  <div className={styles.featureCard}>
+                    <p>
+                      Pengoperasian palang berjalan mengikuti data sensor dan
+                      mode sistem.
+                    </p>
+                  </article>
+
+                  <article className={`${styles.dashboardFeatureCard} ${styles.reveal}`}>
+                    <div className={styles.featureCardTop}>
+                      <span className={styles.featureIndex}>03</span>
+                      <span className={styles.featureTag}>Alerts</span>
+                    </div>
                     <h3>Notifikasi Peringatan</h3>
                     <p>
                       Memberikan peringatan saat kereta terdeteksi atau terjadi
-                      gangguan.
+                      gangguan pada jalur.
                     </p>
-                  </div>
-                  <div className={styles.featureCard}>
+                  </article>
+
+                  <article className={`${styles.dashboardFeatureCard} ${styles.reveal}`}>
+                    <div className={styles.featureCardTop}>
+                      <span className={styles.featureIndex}>04</span>
+                      <span className={styles.featureTag}>History</span>
+                    </div>
                     <h3>Penyimpanan Data</h3>
                     <p>
-                      Menyimpan histori aktivitas untuk analisis dan pelaporan.
+                      Menyimpan histori aktivitas untuk analisis, audit, dan
+                      pelaporan.
                     </p>
-                  </div>
+                  </article>
                 </div>
               </div>
             </section>

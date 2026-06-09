@@ -43,6 +43,8 @@
   list-style: none;
   padding: 0;
   margin: 0;
+  align-items: center; /* pastikan ini ada */
+  padding-top: 6px; /* ← tambahkan ini, sesuaikan nilainya */
 }
 .navlist a {
   color: rgba(230, 238, 252, 0.88);
@@ -50,11 +52,36 @@
   font-weight: 600;
 }
 .ctaButton {
-  background: linear-gradient(90deg, #6dd6ff, #6fe8c9);
-  color: #06202a;
-  padding: 10px 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 0 16px;
   border-radius: 999px;
+  background: rgba(72, 110, 199, 0.16);
+  border: 1px solid rgba(123, 149, 217, 0.2);
+  color: #9bbaff;
+  font-size: 12px;
   font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 0 10px 24px rgba(4, 10, 22, 0.18);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
+}
+.ctaButton:hover {
+  transform: translateY(-1px);
+  background: rgba(72, 110, 199, 0.24);
+  border-color: rgba(123, 149, 217, 0.32);
+  box-shadow: 0 14px 30px rgba(4, 10, 22, 0.24);
+}
+.ctaButton:focus-visible {
+  outline: 2px solid rgba(155, 186, 255, 0.7);
+  outline-offset: 2px;
 }
 
 .hero {
@@ -100,6 +127,9 @@
   padding: 72px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.02);
 }
+.dashboardSection {
+  padding-top: 84px;
+}
 .section h2 {
   font-size: 1.6rem;
   margin-bottom: 12px;
@@ -119,6 +149,122 @@
   background: rgba(255, 255, 255, 0.02);
   padding: 18px;
   border-radius: 12px;
+}
+
+.dashboardSectionHeader {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px;
+  border-radius: 20px;
+  background: rgba(23, 31, 54, 0.6);
+  border: 1px solid rgba(123, 149, 217, 0.1);
+  box-shadow: 0 24px 64px rgba(4, 10, 22, 0.28);
+}
+
+.dashboardSectionHeader h2 {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1.05;
+  margin-bottom: 10px;
+}
+
+.dashboardEyebrow {
+  margin-bottom: 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #6f87b9;
+}
+
+.dashboardBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: rgba(72, 110, 199, 0.16);
+  border: 1px solid rgba(123, 149, 217, 0.2);
+  color: #9bbaff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.dashboardFeatureGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.dashboardFeatureGrid > :first-child {
+  grid-column: 1 / -1;
+}
+
+.dashboardFeatureCard {
+  padding: 18px 18px 16px;
+  border-radius: 18px;
+  background: rgba(23, 31, 54, 0.6);
+  border: 1px solid rgba(123, 149, 217, 0.1);
+  box-shadow: 0 18px 50px rgba(4, 10, 22, 0.18);
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.dashboardFeatureCard:hover {
+  transform: translateY(-6px);
+  border-color: rgba(123, 149, 217, 0.22);
+  box-shadow: 0 24px 60px rgba(4, 10, 22, 0.28);
+}
+
+.featureCardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.featureIndex {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #6f87b9;
+}
+
+.featureTag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(10, 15, 28, 0.44);
+  border: 1px solid rgba(123, 149, 217, 0.1);
+  color: #9bbaff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.dashboardFeatureCard h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.dashboardFeatureCard p {
+  color: rgba(230, 238, 252, 0.76);
+  line-height: 1.7;
+  max-width: 58ch;
 }
 
 .archFlow {
@@ -403,7 +549,6 @@
     grid-template-columns: 1fr;
     min-height: fit-content;
   }
-  .features,
   .advantages {
     grid-template-columns: 1fr;
   }
@@ -419,6 +564,15 @@
   .techRowBottom {
     grid-template-columns: 1fr;
     width: 100%;
+  }
+  .dashboardSectionHeader {
+    flex-direction: column;
+  }
+  .dashboardFeatureGrid {
+    grid-template-columns: 1fr;
+  }
+  .dashboardFeatureGrid > :first-child {
+    grid-column: auto;
   }
 }
 
