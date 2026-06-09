@@ -43,8 +43,8 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  align-items: center; /* pastikan ini ada */
-  padding-top: 6px; /* ← tambahkan ini, sesuaikan nilainya */
+  align-items: center;
+  padding-top: 6px;
 }
 .navlist a {
   color: rgba(230, 238, 252, 0.88);
@@ -627,6 +627,15 @@
   border-radius: 28px;
   background: rgba(8, 20, 38, 0.65);
   border: 1px solid rgba(109, 214, 255, 0.1);
+}
+
+.architectureImage {
+  display: block;
+  margin: 12px auto 0;
+  width: 100%;
+  max-width: 900px;
+  height: auto;
+  border-radius: 12px;
 }
 
 .archDesc {

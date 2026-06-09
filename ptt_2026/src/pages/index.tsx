@@ -333,95 +333,11 @@ export default function Home() {
                 </div>
 
                 <div className={styles.architectureCard}>
-                  <svg
-                    width="100%"
-                    height="280"
-                    viewBox="0 0 900 280"
-                    fill="none"
-                  >
-                    {/* Kereta */}
-                    <rect
-                      x="40"
-                      y="80"
-                      width="140"
-                      height="70"
-                      rx="16"
-                      stroke="#6dd6ff"
-                      strokeWidth="2"
-                    />
-                    <text x="110" y="120" fill="#6dd6ff" textAnchor="middle">
-                      🚆 Kereta
-                    </text>
-
-                    {/* Sensor */}
-                    <rect
-                      x="260"
-                      y="80"
-                      width="140"
-                      height="70"
-                      rx="16"
-                      stroke="#79dfff"
-                      strokeWidth="2"
-                    />
-                    <text x="330" y="120" fill="#79dfff" textAnchor="middle">
-                      📡 Sensor
-                    </text>
-
-                    {/* ESP32 */}
-                    <rect
-                      x="480"
-                      y="80"
-                      width="140"
-                      height="70"
-                      rx="16"
-                      stroke="#ffd36f"
-                      strokeWidth="2"
-                    />
-                    <text x="550" y="120" fill="#ffd36f" textAnchor="middle">
-                      ⚙️ ESP32
-                    </text>
-
-                    {/* Firebase */}
-                    <rect
-                      x="700"
-                      y="80"
-                      width="140"
-                      height="70"
-                      rx="16"
-                      stroke="#65f5d6"
-                      strokeWidth="2"
-                    />
-                    <text x="770" y="120" fill="#65f5d6" textAnchor="middle">
-                      ☁ Firebase
-                    </text>
-
-                    {/* Dashboard */}
-                    <rect
-                      x="360"
-                      y="200"
-                      width="180"
-                      height="60"
-                      rx="16"
-                      stroke="#cfd6ff"
-                      strokeWidth="2"
-                    />
-                    <text x="450" y="236" fill="#cfd6ff" textAnchor="middle">
-                      💻 Dashboard Web
-                    </text>
-
-                    {/* Arrows */}
-                    <path d="M180 115 H260" stroke="#6dd6ff" strokeWidth="3" />
-
-                    <path d="M400 115 H480" stroke="#6dd6ff" strokeWidth="3" />
-
-                    <path d="M620 115 H700" stroke="#6dd6ff" strokeWidth="3" />
-
-                    <path
-                      d="M770 150 L450 200"
-                      stroke="#cfd6ff"
-                      strokeWidth="3"
-                    />
-                  </svg>
+                  <img
+                    src="\arsitektur.png"
+                    alt="Arsitektur sistem"
+                    className={styles.architectureImage}
+                  />
 
                   <p className={styles.archDesc}>
                     Data dari sensor dikirim ke ESP32, kemudian diteruskan ke
