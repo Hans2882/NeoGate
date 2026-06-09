@@ -1,0 +1,501 @@
+.page {
+  font-family:
+    "Space Grotesk",
+    Inter,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
+  color: #e6eefc;
+  background: linear-gradient(180deg, #07101a 0%, #081423 60%);
+}
+
+.container {
+  width: min(1180px, 96%);
+  margin: 0 auto;
+}
+
+.skipLink {
+  position: absolute;
+  left: -9999px;
+}
+.skipLink:focus {
+  left: 18px;
+  top: 18px;
+  padding: 8px 12px;
+  background: #0b2b44;
+  border-radius: 8px;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 0;
+}
+.brand {
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+.navlist {
+  display: flex;
+  gap: 18px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.navlist a {
+  color: rgba(230, 238, 252, 0.88);
+  text-decoration: none;
+  font-weight: 600;
+}
+.ctaButton {
+  background: linear-gradient(90deg, #6dd6ff, #6fe8c9);
+  color: #06202a;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 540px;
+  gap: 32px;
+  align-items: center;
+  min-height: 76vh;
+  padding: 56px 0;
+}
+.heroTitle {
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1.02;
+  font-weight: 800;
+}
+.heroDesc {
+  margin-top: 18px;
+  color: rgba(230, 238, 252, 0.86);
+  max-width: 56ch;
+}
+.heroActions {
+  margin-top: 26px;
+  display: flex;
+  gap: 12px;
+}
+.secondary {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 10px 14px;
+  border-radius: 999px;
+  color: #dfe8ff;
+}
+.heroVisual {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.section {
+  padding: 72px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.02);
+}
+.section h2 {
+  font-size: 1.6rem;
+  margin-bottom: 12px;
+}
+.section p {
+  color: rgba(230, 238, 252, 0.86);
+  max-width: 66ch;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  margin-top: 18px;
+}
+.featureCard {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 18px;
+  border-radius: 12px;
+}
+
+.archFlow {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 20px;
+  border-radius: 12px;
+}
+.archList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+.archStep {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #6dd6ff;
+}
+
+.techGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+  align-items: center;
+}
+
+.techRowTop {
+  display: grid;
+  grid-template-columns: repeat(3, 260px);
+  gap: 12px;
+  justify-content: center;
+}
+
+.techRowBottom {
+  display: grid;
+  grid-template-columns: repeat(2, 260px);
+  gap: 12px;
+  justify-content: center;
+}
+.techCard {
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  aspect-ratio: 1 / 1;
+  transition:
+    transform 150ms ease,
+    background 150ms ease;
+}
+.techCard:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* feature hover + glow */
+.featureCard {
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease;
+}
+.featureCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(90, 200, 255, 0.08);
+}
+
+.statRow {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+}
+.statCard {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 12px 16px;
+  border-radius: 10px;
+  min-width: 120px;
+  text-align: left;
+}
+.statCard strong {
+  display: block;
+  font-size: 1.3rem;
+}
+.indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.12);
+  color: #bfeef0;
+  font-weight: 600;
+}
+.indicator .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.dot--green {
+  background: #6fe8c9;
+}
+.dot--red {
+  background: #ff9f9f;
+}
+
+/* reveal on scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 420ms ease,
+    transform 420ms ease;
+}
+.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* preview dashboard mock */
+.previewCard {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.02),
+    rgba(255, 255, 255, 0.01)
+  );
+  padding: 18px;
+  border-radius: 12px;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.glowHover {
+  transition:
+    box-shadow 220ms ease,
+    transform 220ms ease;
+}
+.glowHover:hover {
+  box-shadow: 0 12px 40px rgba(111, 232, 201, 0.12);
+  transform: translateY(-6px);
+}
+
+.techIcon {
+  width: 56px;
+  height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.techInfo {
+  text-align: center;
+}
+.techInfo strong {
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+.techInfo div {
+  color: rgba(230, 238, 252, 0.86);
+  font-size: 0.93rem;
+  line-height: 1.3;
+}
+
+/* IoT animation styles */
+.visualSvg {
+  width: 100%;
+  max-width: 640px;
+  display: block;
+}
+.iotAnimation {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.iotNode {
+  transition: transform 300ms ease;
+}
+.iotLinks {
+  opacity: 0.95;
+}
+.iotArrow {
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+  animation: draw 2s linear infinite;
+}
+.iotFloat {
+  animation: float 3.6s ease-in-out infinite;
+}
+.iotPulse {
+  animation: blink 1.4s ease-in-out infinite;
+}
+
+@keyframes draw {
+  0% {
+    stroke-dashoffset: 120;
+    opacity: 0.4;
+  }
+  50% {
+    stroke-dashoffset: 40;
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 120;
+    opacity: 0.4;
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.advantages {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  margin-top: 18px;
+}
+.advItem {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 14px;
+  border-radius: 10px;
+}
+
+.ctaBlock {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px;
+  border-radius: 12px;
+  background: linear-gradient(
+    90deg,
+    rgba(109, 214, 255, 0.06),
+    rgba(111, 232, 201, 0.03)
+  );
+  margin-top: 28px;
+}
+
+.footer {
+  padding: 28px 0 56px;
+  color: rgba(230, 238, 252, 0.78);
+  border-top: 1px solid rgba(255, 255, 255, 0.02);
+  margin-top: 24px;
+}
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    min-height: fit-content;
+  }
+  .features,
+  .advantages {
+    grid-template-columns: 1fr;
+  }
+  .heroVisual {
+    order: -1;
+  }
+  .techCard {
+    aspect-ratio: auto;
+    align-items: flex-start;
+    flex-direction: row;
+  }
+  .techRowTop,
+  .techRowBottom {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+}
+
+.sectionDesc {
+  max-width: 850px;
+  margin-top: 16px;
+  color: rgba(230, 238, 252, 0.75);
+  line-height: 1.8;
+}
+
+.workflowCards {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.workflowCard {
+  padding: 24px;
+  border-radius: 24px;
+  background: rgba(8, 20, 38, 0.7);
+  border: 1px solid rgba(109, 214, 255, 0.15);
+  transition: 0.3s;
+}
+
+.workflowCard:hover {
+  transform: translateY(-6px);
+  border-color: #6dd6ff;
+}
+
+.workflowCard span {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #6dd6ff;
+  opacity: 0.7;
+}
+
+.workflowCard h3 {
+  margin-top: 12px;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+}
+
+.workflowCard p {
+  color: rgba(230, 238, 252, 0.75);
+  line-height: 1.7;
+}
+
+.architectureCard {
+  margin-top: 50px;
+  padding: 40px;
+  border-radius: 28px;
+  background: rgba(8, 20, 38, 0.65);
+  border: 1px solid rgba(109, 214, 255, 0.1);
+}
+
+.archDesc {
+  margin-top: 24px;
+  text-align: center;
+  max-width: 900px;
+  margin-inline: auto;
+  color: rgba(230, 238, 252, 0.8);
+  line-height: 1.8;
+}
+
+@media (max-width: 1000px) {
+  .workflowCards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .workflowCards {
+    grid-template-columns: 1fr;
+  }
+
+  .architectureCard {
+    padding: 20px;
+  }
+}
