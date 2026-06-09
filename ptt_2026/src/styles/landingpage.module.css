@@ -132,7 +132,8 @@
 }
 .section h2 {
   font-size: 1.6rem;
-  margin-bottom: 12px;
+  margin-top: -60px;
+  margin-bottom: 30px;
 }
 .section p {
   color: rgba(230, 238, 252, 0.86);
@@ -167,6 +168,7 @@
   font-size: clamp(1.8rem, 3vw, 2.4rem);
   font-weight: 800;
   line-height: 1.05;
+  margin-top: 0;
   margin-bottom: 10px;
 }
 

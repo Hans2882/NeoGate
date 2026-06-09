@@ -224,7 +224,10 @@ export default function Home() {
               </div>
             </section>
 
-            <section id="fitur" className={`${styles.section} ${styles.dashboardSection}`}>
+            <section
+              id="fitur"
+              className={`${styles.section} ${styles.dashboardSection}`}
+            >
               <div className={styles.container}>
                 <div className={styles.dashboardSectionHeader}>
                   <div>
@@ -232,14 +235,17 @@ export default function Home() {
                     <h2>Fitur Utama</h2>
                     <p className={styles.sectionDesc}>
                       Susunan fitur ini mengikuti bahasa visual dashboard supaya
-                      landing page terasa satu keluarga dengan halaman operasional.
+                      landing page terasa satu keluarga dengan halaman
+                      operasional.
                     </p>
                   </div>
                   <span className={styles.dashboardBadge}>Live System</span>
                 </div>
 
                 <div className={styles.dashboardFeatureGrid}>
-                  <article className={`${styles.dashboardFeatureCard} ${styles.reveal}`}>
+                  <article
+                    className={`${styles.dashboardFeatureCard} ${styles.reveal}`}
+                  >
                     <div className={styles.featureCardTop}>
                       <span className={styles.featureIndex}>01</span>
                       <span className={styles.featureTag}>Monitoring</span>
@@ -251,7 +257,9 @@ export default function Home() {
                     </p>
                   </article>
 
-                  <article className={`${styles.dashboardFeatureCard} ${styles.reveal}`}>
+                  <article
+                    className={`${styles.dashboardFeatureCard} ${styles.reveal}`}
+                  >
                     <div className={styles.featureCardTop}>
                       <span className={styles.featureIndex}>02</span>
                       <span className={styles.featureTag}>Automation</span>
@@ -263,7 +271,9 @@ export default function Home() {
                     </p>
                   </article>
 
-                  <article className={`${styles.dashboardFeatureCard} ${styles.reveal}`}>
+                  <article
+                    className={`${styles.dashboardFeatureCard} ${styles.reveal}`}
+                  >
                     <div className={styles.featureCardTop}>
                       <span className={styles.featureIndex}>03</span>
                       <span className={styles.featureTag}>Alerts</span>
@@ -275,7 +285,9 @@ export default function Home() {
                     </p>
                   </article>
 
-                  <article className={`${styles.dashboardFeatureCard} ${styles.reveal}`}>
+                  <article
+                    className={`${styles.dashboardFeatureCard} ${styles.reveal}`}
+                  >
                     <div className={styles.featureCardTop}>
                       <span className={styles.featureIndex}>04</span>
                       <span className={styles.featureTag}>History</span>
@@ -349,7 +361,7 @@ export default function Home() {
               </div>
             </section>
 
-            <section className={`${styles.ctaBlock} ${styles.reveal}`}>
+            {/* <section className={`${styles.ctaBlock} ${styles.reveal}`}>
               <div
                 className={styles.container}
                 style={{
@@ -374,7 +386,7 @@ export default function Home() {
                   </a>
                 </div>
               </div>
-            </section>
+            </section> */}
 
             <section id="teknologi" className={styles.section}>
               <div className={styles.container}>
@@ -473,7 +485,7 @@ export default function Home() {
                         </svg>
                       </div>
                       <div className={styles.techInfo}>
-                        <strong>Firebase / MySQL</strong>
+                        <strong>Firebase</strong>
                         <div>
                           Sinkronisasi data real-time, autentikasi, dan
                           penyimpanan histori aktivitas.
@@ -507,8 +519,11 @@ export default function Home() {
                         </svg>
                       </div>
                       <div className={styles.techInfo}>
-                        <strong>Laravel</strong>
-                        <div>Backend dan API sistem.</div>
+                        <strong>Next.js</strong>
+                        <div>
+                          Frontend dashboard yang cepat dengan integrasi
+                          Firebase untuk pembaruan data real-time.
+                        </div>
                       </div>
                     </div>
 
@@ -530,10 +545,9 @@ export default function Home() {
                         </svg>
                       </div>
                       <div className={styles.techInfo}>
-                        <strong>Next.js</strong>
+                        <strong>API Routes</strong>
                         <div>
-                          Frontend dashboard yang cepat, SSR/ISR, dan integrasi
-                          WebSocket untuk live updates.
+                          Backend API sistem menggunakan API routes di Next.js.
                         </div>
                       </div>
                     </div>
