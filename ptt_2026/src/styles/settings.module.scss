@@ -1,6 +1,9 @@
 .settingsContent {
   padding: 24px 32px;
   flex: 1;
+  min-height: 100vh;
+  overflow-y: auto;
+  padding-bottom: 80px;
 }
 
 .settingsHero {
@@ -35,10 +38,10 @@
 }
 
 .panel {
-  background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   padding: 24px;
+  margin-bottom: 32px;
 
   h2 {
     font-size: 1rem;
