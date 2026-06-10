@@ -163,50 +163,6 @@ export default function Home() {
                   }}
                 >
                   <IoTAnimation />
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: 10,
-                      alignItems: "center",
-                      color: "rgba(230,238,252,0.9)",
-                    }}
-                    className={styles.reveal}
-                  >
-                    <div
-                      style={{ display: "flex", alignItems: "center", gap: 8 }}
-                    >
-                      <span>🚆</span>
-                      <span>Kereta</span>
-                    </div>
-                    <span>→</span>
-                    <div
-                      style={{ display: "flex", alignItems: "center", gap: 8 }}
-                    >
-                      <span>📡</span>
-                      <span>Sensor</span>
-                    </div>
-                    <span>→</span>
-                    <div
-                      style={{ display: "flex", alignItems: "center", gap: 8 }}
-                    >
-                      <span>⚙️</span>
-                      <span>ESP32</span>
-                    </div>
-                    <span>→</span>
-                    <div
-                      style={{ display: "flex", alignItems: "center", gap: 8 }}
-                    >
-                      <span>☁️</span>
-                      <span>Firebase</span>
-                    </div>
-                    <span>→</span>
-                    <div
-                      style={{ display: "flex", alignItems: "center", gap: 8 }}
-                    >
-                      <span>💻</span>
-                      <span>Dashboard</span>
-                    </div>
-                  </div>
                 </div>
               </div>
             </section>

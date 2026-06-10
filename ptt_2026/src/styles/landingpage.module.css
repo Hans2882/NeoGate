@@ -446,16 +446,20 @@
 /* IoT animation styles */
 .visualSvg {
   width: 100%;
-  max-width: 640px;
+  max-width: 900px;
+  height: 500px;
   display: block;
 }
+
 .iotAnimation {
   width: 100%;
-  max-width: 640px;
+  max-width: 900px;
+  min-height: 500px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .iotNode {
   transition: transform 300ms ease;
 }
@@ -548,15 +552,35 @@
 
 @media (max-width: 900px) {
   .hero {
-    grid-template-columns: 1fr;
-    min-height: fit-content;
+    display: grid;
+    grid-template-columns: 1fr 700px;
+    gap: 32px;
+    align-items: center;
+    min-height: 76vh;
+    padding: 56px 0;
   }
+
+ .heroVisual {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.02),
+    transparent
+  );
+  border-radius: 16px;
+  padding: 10px;
+  width: 500px;
+  height: 350px;
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
   .advantages {
     grid-template-columns: 1fr;
   }
-  .heroVisual {
-    order: -1;
-  }
+
   .techCard {
     aspect-ratio: auto;
     align-items: flex-start;
