@@ -66,7 +66,7 @@ export default function Sidebar({ active = 'dashboard', isOpen = false }: Sideba
             <span className={styles.navIcon}>
               <UserPlusIcon />
             </span>
-            Admin Operator
+            Tambah Operator
           </Link>
         )}
         
