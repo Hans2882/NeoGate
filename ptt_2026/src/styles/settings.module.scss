@@ -1,0 +1,110 @@
+.settingsContent {
+  padding: 24px 32px;
+  flex: 1;
+}
+
+.settingsHero {
+  margin-bottom: 32px;
+}
+
+.kicker {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6dd6ff;
+  margin-bottom: 8px;
+}
+
+.title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #e6eeff;
+  margin: 0 0 8px;
+}
+
+.subtitle {
+  color: rgba(230, 238, 252, 0.7);
+  font-size: 0.95rem;
+}
+
+.settingsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.panel {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 24px;
+
+  h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #e6eeff;
+    margin: 0 0 4px;
+  }
+}
+
+.panelHint {
+  font-size: 0.85rem;
+  color: rgba(230, 238, 252, 0.55);
+  margin-bottom: 16px;
+}
+
+.formGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fieldLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(230, 238, 252, 0.8);
+}
+
+.input,
+.select {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #e6eeff;
+  font-size: 0.9rem;
+  outline: none;
+
+  &:focus {
+    border-color: #6dd6ff;
+  }
+}
+
+.actions {
+  margin-top: 8px;
+}
+
+.buttonPrimary {
+  background: rgba(72, 110, 199, 0.16);
+  border: 1px solid rgba(123, 149, 217, 0.2);
+  color: #9bbaff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 10px 24px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: rgba(72, 110, 199, 0.28);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

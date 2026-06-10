@@ -88,7 +88,7 @@ export default function Home() {
                   efisiensi operasional, dan kecepatan pengambilan keputusan.
                 </p>
 
-                <div className={`${styles.statRow} ${styles.reveal}`}>
+                {/* <div className={`${styles.statRow} ${styles.reveal}`}>
                   <div className={styles.statCard}>
                     <div>24/7 Monitoring</div>
                     <strong>Real-Time Data</strong>
@@ -116,7 +116,7 @@ export default function Home() {
                       Terakhir diperbarui 2 menit lalu
                     </div>
                   </div>
-                </div>
+                </div> */}
 
                 <div
                   style={{
