@@ -40,6 +40,7 @@ export default function Home() {
         </a>
         <div className={styles.container}>
           <header className={styles.navbar}>
+             <div className={styles.navInner}>
             <div className={styles.brand}>
               <span className={compStyles.brandTop}>NeoGate</span>
             </div>
@@ -61,13 +62,9 @@ export default function Home() {
                 <li>
                   <a href="#teknologi">Teknologi</a>
                 </li>
-                <li>
-                  <a href="/auth/login" className={styles.ctaButton}>
-                    Login Dashboard
-                  </a>
-                </li>
               </ul>
             </nav>
+            </div>
           </header>
 
           <main id="main">
@@ -151,6 +148,10 @@ export default function Home() {
                   <a href="#tentang" className={styles.secondary}>
                     Pelajari Sistem
                   </a>
+
+                  <Link href="/auth/login" className={styles.ctaButton}>
+                    Masuk Dashboard
+                  </Link>
                 </div>
               </div>
               <div className={styles.heroVisual}>
